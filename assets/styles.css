@@ -237,35 +237,84 @@ html.gate-active, html.gate-active body { overflow: hidden; }
 }
 .gate.is-open .env__flap { transform: rotateX(-172deg); z-index: 1; }
 
+/* Pressed wax seal — an oval of cream wax with a raised engraving inside */
 .env__seal {
   position: absolute;
   z-index: 5;
-  left: 50%; top: 54%;
+  left: 50%; top: 53%;
   translate: -50% -50%;
-  width: clamp(58px, 17vw, 74px);
-  height: clamp(58px, 17vw, 74px);
+  width: clamp(76px, 23vw, 100px);
+  height: clamp(97px, 29vw, 128px);
   border-radius: 50%;
   display: grid;
   place-items: center;
-  overflow: hidden;
-  background: radial-gradient(circle at 34% 28%, #DCC08A 0%, var(--gold) 70%);
-  box-shadow: 0 4px 14px rgba(46, 50, 44, .22), inset 0 -2px 6px rgba(46, 50, 44, .18);
+  background:
+    radial-gradient(62% 54% at 33% 24%, #FCF5E7 0%, #F0E2C6 40%, #DCC8A2 78%, #CDB88E 100%);
+  box-shadow:
+    0 7px 18px rgba(46, 50, 44, .26),
+    inset 0 -4px 9px rgba(150, 120, 70, .34),
+    inset 0 4px 7px rgba(255, 253, 246, .85);
   transition: opacity .3s var(--ease), scale .3s var(--ease);
 }
 .gate.is-open .env__seal { opacity: 0; scale: .82; }
 
-/* Doubled class: `.monogram` is declared later in this file and would
-   otherwise win on source order and blow the seal up to hero size. */
-.monogram.monogram--seal {
-  font-size: clamp(1rem, 3.2vw, 1.3rem);
-  line-height: 1;
-  margin: 0;
-  color: var(--ivory);
+.seal {
+  width: 78%;
+  height: 78%;
+  overflow: visible;
+  fill: none;
+  stroke: rgba(143, 114, 66, .72);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* Light edge under every line reads as wax pressed up, not printed on */
+  filter: drop-shadow(0 .8px 0 rgba(255, 253, 246, .9));
 }
-.monogram.monogram--seal .monogram__amp {
-  color: var(--cream);
-  opacity: .85;
-  font-size: .5em;
+/* Round beads: a zero-length dash with a round cap draws a dot */
+.seal__beads { stroke-dasharray: .01 7.5; stroke-width: 2.6; }
+.seal__ring  { stroke-width: 1.1; stroke: rgba(150, 122, 76, .38); }
+.seal__bud,
+.seal__leaf  { fill: rgba(150, 122, 76, .16); }
+.seal__mono {
+  fill: rgba(138, 110, 66, .78);
+  stroke: none;
+  font-family: var(--serif);
+  font-size: 15px;
+  letter-spacing: .06em;
+}
+
+/* Gate wordmark, set like the letterhead it's imitating */
+.gate__intro {
+  text-align: center;
+  transition: opacity .35s var(--ease), transform .35s var(--ease);
+}
+.gate.is-open .gate__intro { opacity: 0; transform: translateY(-10px); }
+
+.gate__from {
+  margin: 0 0 .35rem;
+  font-family: var(--serif);
+  font-size: clamp(.66rem, 2.4vw, .8rem);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.gate__names {
+  margin: 0;
+  font-family: "Pinyon Script", var(--serif);
+  font-size: clamp(2.5rem, 11vw, 4rem);
+  line-height: 1.25;
+  color: var(--sage-deep);
+  /* Script descenders and swashes need room on both sides */
+  padding: 0 .12em .08em;
+}
+/* Pinyon Script's ampersand is a cramped, unreadable glyph — borrow
+   Playfair's italic one, matching the gold "and" already used in the hero. */
+.gate__amp {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: .58em;
+  color: var(--gold);
+  padding: 0 .1em;
 }
 
 .gate__skip {

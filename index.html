@@ -15,7 +15,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Pinyon+Script&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="assets/styles.css" />
 
 <script>
@@ -28,6 +28,11 @@
 
 <!-- ── Envelope intro gate ────────────────────────────────────────── -->
 <div class="gate" id="gate" role="dialog" aria-modal="true" aria-label="Open your wedding invitation">
+  <div class="gate__intro">
+    <p class="gate__from">A Wedding Invitation From</p>
+    <p class="gate__names">Ahmed <span class="gate__amp">&amp;</span> Rawan</p>
+  </div>
+
   <button class="gate__open" id="gate-open" type="button">
     <span class="envelope" aria-hidden="true">
       <span class="env__back"></span>
@@ -41,9 +46,17 @@
       <span class="env__flap"></span>
 
       <span class="env__seal">
-        <span class="monogram monogram--seal">
-          <span class="monogram__letter">A</span><span class="monogram__amp">&amp;</span><span class="monogram__letter">R</span>
-        </span>
+        <!-- Wax seal engraving: beaded ring, cusped arch, botanical sprig, initials -->
+        <svg class="seal" viewBox="0 0 100 128" aria-hidden="true" focusable="false">
+          <ellipse class="seal__beads" cx="50" cy="64" rx="39" ry="51" />
+          <ellipse class="seal__ring"  cx="50" cy="64" rx="33" ry="45" />
+          <path class="seal__arch" d="M30 92 L30 56 C30 43 38 34 46 37 C47 28 53 28 54 37 C62 34 70 43 70 56 L70 92" />
+          <path class="seal__stem"  d="M50 84 L50 58" />
+          <path class="seal__bud"   d="M50 58 C43 53 43 41 50 36 C57 41 57 53 50 58 Z" />
+          <path class="seal__leaf"  d="M50 78 C41 76 35 70 34 62 C42 64 49 70 50 78 Z" />
+          <path class="seal__leaf"  d="M50 74 C59 72 65 66 66 58 C58 60 51 66 50 74 Z" />
+          <text class="seal__mono" x="50" y="107" text-anchor="middle">A &amp; R</text>
+        </svg>
       </span>
     </span>
     <span class="gate__label">Open the Invitation</span>
