@@ -864,6 +864,12 @@ html.gate-active, html.gate-active body { overflow: hidden; }
 }
 .input.is-invalid { border-color: #B4544A; box-shadow: 0 0 0 3px rgba(180, 84, 74, .13); }
 
+.input--area {
+  min-height: 3.4rem;
+  line-height: 1.55;
+  resize: vertical;
+}
+
 .select-wrap { position: relative; }
 .select-wrap::after {
   content: "";

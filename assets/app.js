@@ -218,9 +218,40 @@
     return GUESTS_OTHER_ENABLED && guestsSel.value === OTHER_SENTINEL;
   }
 
+  /* The guest count includes the person filling the form in, so the number of
+     *other* names to list is one fewer. Spelling that out avoids the usual
+     confusion over whether to write yourself down again. */
+  var invitedHint = document.getElementById("invited-hint");
+  var invitedField = document.getElementById("invitedGuest");
+
+  function updateInvitedHint() {
+    var total = parseInt(guestsSel.value, 10);   // "3 guests" → 3
+
+    if (total === 1) {
+      invitedHint.textContent = "Just yourself — you can leave this blank.";
+      invitedField.placeholder = "";
+      return;
+    }
+
+    if (total > 1) {
+      var others = total - 1;
+      invitedHint.textContent =
+        "Please list the " + others + (others === 1 ? " guest" : " guests") +
+        " joining you, separated by commas.";
+      invitedField.placeholder = others === 1
+        ? "Layla Haddad"
+        : "Layla Haddad, Omar Haddad";
+      return;
+    }
+
+    invitedHint.textContent = "Bringing others? List their full names, separated by commas.";
+    invitedField.placeholder = "Layla Haddad, Omar Haddad";
+  }
+
   guestsSel.addEventListener("change", function () {
     otherWrap.hidden = !isOther();
     if (!otherWrap.hidden) otherInput.focus();
+    updateInvitedHint();
     clearError("guests");
   });
 
@@ -345,6 +376,7 @@
   againBtn.addEventListener("click", function () {
     form.reset();
     otherWrap.hidden = true;
+    updateInvitedHint();
     ["fullName", "attendance", "guests", "guestsOther"].forEach(clearError);
     statusEl.textContent = "";
     submitBtn.disabled = false;

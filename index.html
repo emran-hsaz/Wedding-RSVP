@@ -253,11 +253,14 @@
         </div>
       </div>
 
-      <!-- Q4 · entry.2606285 -->
+      <!-- Q4 · entry.2606285 (paragraph field — several names are expected) -->
       <div class="field">
         <label class="field__label" for="invitedGuest">Invited guest’s full name <span class="opt">optional</span></label>
-        <input class="input" type="text" id="invitedGuest" name="invitedGuest"
-               placeholder="Name of the guest joining you" />
+        <textarea class="input input--area" id="invitedGuest" name="invitedGuest" rows="2"
+                  placeholder="Layla Haddad, Omar Haddad"></textarea>
+        <p class="field__hint" id="invited-hint">
+          Bringing others? List their full names, separated by commas.
+        </p>
       </div>
 
       <button class="btn btn--solid btn--block" type="submit" id="submit-btn">
