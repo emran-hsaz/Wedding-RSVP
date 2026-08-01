@@ -33,6 +33,16 @@
   var OTHER_SENTINEL = "__other_option__";
   var OTHER_LABEL = "5+ guests (please specify)";
 
+  /* Lets the scroll-reveal cascade hold until the camera has landed, so the
+     page settles in front of the visitor instead of arriving pre-assembled. */
+  var gateDone = false, gateWaiters = [];
+  function markGateDone() {
+    gateDone = true;
+    gateWaiters.forEach(function (fn) { fn(); });
+    gateWaiters = [];
+  }
+  function whenGateDone(fn) { gateDone ? fn() : gateWaiters.push(fn); }
+
   /* ── Envelope intro gate ──────────────────────────────────────
      Shown on every fresh load — it's part of the invitation. Opening
      requires a deliberate click; a "Skip intro" affordance fades in
@@ -43,6 +53,7 @@
     var site = document.getElementById("site");
     if (!gate || !site) {
       document.documentElement.classList.remove("gate-active");
+      markGateDone();
       return;
     }
 
@@ -68,9 +79,13 @@
 
       site.classList.add("is-revealed");
 
+      // Hero copy starts cascading while the camera is still settling — the
+      // overlap is what stops it feeling like two separate animations.
+      setTimeout(markGateDone, calm ? 0 : 420);
+
       setTimeout(function () {
         if (gate.parentNode) gate.parentNode.removeChild(gate);
-      }, calm ? 0 : 700);
+      }, calm ? 0 : 1100);
     }
 
     function open() {
@@ -85,8 +100,9 @@
       // and skip the animation it just started.
       setTimeout(function () { gate.addEventListener("click", reveal); }, 300);
 
-      // flap 0.7s → card rises → whole gate leaves: ~1.7s click-to-reveal
-      setTimeout(reveal, calm ? 0 : 1150);
+      // Flap lifts (0.7s) → card rises clear of the envelope → the camera
+      // pushes through it onto the site. ~2.4s click to fully settled.
+      setTimeout(reveal, calm ? 0 : 1250);
     }
 
     openBtn.addEventListener("click", open);
@@ -161,14 +177,18 @@
       entries.forEach(function (entry, i) {
         if (!entry.isIntersecting) return;
         var el = entry.target;
-        // stagger siblings slightly for a softer cascade
-        el.style.transitionDelay = Math.min(i * 70, 280) + "ms";
+        // stagger siblings so a section assembles line by line
+        el.style.transitionDelay = Math.min(i * 95, 420) + "ms";
         el.classList.add("is-visible");
         io.unobserve(el);
       });
     }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
 
-    revealables.forEach(function (el) { io.observe(el); });
+    // Held until the intro finishes, otherwise the hero would quietly
+    // animate in behind the envelope and be fully settled on arrival.
+    whenGateDone(function () {
+      revealables.forEach(function (el) { io.observe(el); });
+    });
   } else {
     revealables.forEach(function (el) { el.classList.add("is-visible"); });
   }

@@ -23,6 +23,8 @@
   --shadow-md: 0 2px 6px rgba(46, 50, 44, .06), 0 18px 44px rgba(46, 50, 44, .09);
 
   --ease: cubic-bezier(.22, .61, .36, 1);
+  /* Slower settle at the end — reads as a camera coming to rest */
+  --ease-cine: cubic-bezier(.16, .84, .24, 1);
   --nav-h: 68px;
 }
 
@@ -94,14 +96,21 @@ a { color: var(--sage-deep); }
 
 html.gate-active, html.gate-active body { overflow: hidden; }
 
+/* The site starts pushed back and out of focus, then the "camera" settles
+   onto it as the envelope flies past. */
 .js .site {
   opacity: 0;
-  transform: scale(1.015);
-  transition: opacity .6s var(--ease), transform .6s var(--ease);
+  transform: scale(1.07);
+  filter: blur(10px);
+  transition:
+    opacity .85s var(--ease-cine),
+    transform 1.15s var(--ease-cine),
+    filter .8s var(--ease-cine);
 }
-/* Settles to `transform: none` — anything else would break the fixed nav,
-   since a transformed ancestor becomes the containing block for fixed kids. */
-.js .site.is-revealed { opacity: 1; transform: none; }
+/* Must land on `none`, not scale(1)/blur(0) — a transformed *or* filtered
+   ancestor becomes the containing block for fixed children and would strand
+   the sticky nav mid-page. */
+.js .site.is-revealed { opacity: 1; transform: none; filter: none; }
 
 .js .gate {
   position: fixed;
@@ -130,10 +139,23 @@ html.gate-active, html.gate-active body { overflow: hidden; }
   pointer-events: none;
 }
 
+/* The envelope rushes past the lens and blurs out of frame */
 .gate.is-leaving {
   opacity: 0;
-  transform: scale(1.07);
+  transform: scale(1.75);
+  filter: blur(7px);
   pointer-events: none;
+  transition:
+    opacity .8s var(--ease-cine) .12s,
+    transform 1s var(--ease-cine),
+    filter .7s var(--ease-cine);
+}
+/* Envelope dissolves first so the card alone flies at the camera */
+.gate.is-leaving .env__back,
+.gate.is-leaving .env__front,
+.gate.is-leaving .env__flap {
+  opacity: 0;
+  transition: opacity .4s var(--ease);
 }
 
 .gate__open {
@@ -209,7 +231,7 @@ html.gate-active, html.gate-active body { overflow: hidden; }
   text-transform: uppercase;
   color: var(--muted);
 }
-.gate.is-open .env__card { opacity: 1; transform: translateY(-70%); }
+.gate.is-open .env__card { opacity: 1; transform: translateY(-72%) scale(1.05); }
 
 /* Front pocket: notched at the top so the flap nests into it */
 .env__front {
