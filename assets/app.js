@@ -33,6 +33,73 @@
   var OTHER_SENTINEL = "__other_option__";
   var OTHER_LABEL = "5+ guests (please specify)";
 
+  /* ── Envelope intro gate ──────────────────────────────────────
+     Shown on every fresh load — it's part of the invitation. Opening
+     requires a deliberate click; a "Skip intro" affordance fades in
+     after 4s so nobody is ever stuck waiting.
+  ------------------------------------------------------------- */
+  (function envelopeGate() {
+    var gate = document.getElementById("gate");
+    var site = document.getElementById("site");
+    if (!gate || !site) {
+      document.documentElement.classList.remove("gate-active");
+      return;
+    }
+
+    var openBtn = document.getElementById("gate-open");
+    var skipBtn = document.getElementById("gate-skip");
+    var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    var opened = false, finished = false, skipTimer;
+
+    function reveal() {
+      if (finished) return;
+      finished = true;
+      clearTimeout(skipTimer);
+
+      gate.classList.add("is-leaving");
+      document.documentElement.classList.remove("gate-active");
+
+      // Land where the visitor asked to land — top by default, or the
+      // section named in the URL hash — before anything becomes visible.
+      var target = location.hash && document.querySelector(location.hash);
+      if (target) target.scrollIntoView();
+      else window.scrollTo(0, 0);
+
+      site.classList.add("is-revealed");
+
+      setTimeout(function () {
+        if (gate.parentNode) gate.parentNode.removeChild(gate);
+      }, calm ? 0 : 700);
+    }
+
+    function open() {
+      if (opened) return;
+      opened = true;
+      clearTimeout(skipTimer);
+      skipBtn.classList.remove("is-visible");
+      gate.classList.add("is-open");
+
+      // Once it's opening, a tap anywhere cuts straight to the site. Bound on
+      // a delay so the very click that opened the envelope doesn't bubble up
+      // and skip the animation it just started.
+      setTimeout(function () { gate.addEventListener("click", reveal); }, 300);
+
+      // flap 0.7s → card rises → whole gate leaves: ~1.7s click-to-reveal
+      setTimeout(reveal, calm ? 0 : 1150);
+    }
+
+    openBtn.addEventListener("click", open);
+    skipBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      reveal();
+    });
+
+    skipTimer = setTimeout(function () {
+      if (!opened) skipBtn.classList.add("is-visible");
+    }, 4000);
+  })();
+
   /* ── Countdown ────────────────────────────────────────────────
      Saturday 10 October 2026, 8:00 PM in Asia/Amman.
      Jordan sits at a fixed UTC+3 year-round (DST was abolished in

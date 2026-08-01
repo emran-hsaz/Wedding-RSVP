@@ -86,6 +86,209 @@ a { color: var(--sage-deep); }
   border-radius: 3px;
 }
 
+/* ── Envelope intro gate ────────────────────────────────────── */
+
+/* The gate only exists when JS is alive (the `js` class is set in <head>),
+   so a failed script leaves the site perfectly readable instead of blank. */
+.gate { display: none; }
+
+html.gate-active, html.gate-active body { overflow: hidden; }
+
+.js .site {
+  opacity: 0;
+  transform: scale(1.015);
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+}
+/* Settles to `transform: none` — anything else would break the fixed nav,
+   since a transformed ancestor becomes the containing block for fixed kids. */
+.js .site.is-revealed { opacity: 1; transform: none; }
+
+.js .gate {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 2.25rem;
+  padding: 1.5rem;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 62% 48% at 50% 12%, rgba(200, 209, 188, .5), transparent 70%),
+    linear-gradient(175deg, var(--ivory) 0%, var(--cream) 48%, var(--sage-wash) 100%);
+  transition: opacity .5s var(--ease), transform .5s var(--ease);
+}
+.gate::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background-image:
+    repeating-linear-gradient( 45deg, rgba(138,154,123,.09) 0 1px, transparent 1px 62px),
+    repeating-linear-gradient(-45deg, rgba(195,164,107,.07) 0 1px, transparent 1px 62px);
+  mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000 15%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000 15%, transparent 78%);
+  pointer-events: none;
+}
+
+.gate.is-leaving {
+  opacity: 0;
+  transform: scale(1.07);
+  pointer-events: none;
+}
+
+.gate__open {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 2.25rem;
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gate__label {
+  font-family: var(--serif);
+  font-size: clamp(.7rem, 2.6vw, .82rem);
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--sage-deep);
+  animation: sealPulse 2.6s var(--ease) infinite;
+  transition: opacity .3s var(--ease);
+}
+@keyframes sealPulse {
+  0%, 100% { opacity: .58; text-shadow: 0 0 0 rgba(195, 164, 107, 0); }
+  50%      { opacity: 1;   text-shadow: 0 0 16px rgba(195, 164, 107, .6); }
+}
+.gate.is-open .gate__label { opacity: 0; animation: none; }
+
+/* The envelope itself — pure CSS: back panel, card, front pocket, top flap */
+.envelope {
+  position: relative;
+  display: block;
+  width: min(360px, 76vw);
+  aspect-ratio: 3 / 2;
+  perspective: 1100px;
+}
+
+.env__back {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: linear-gradient(158deg, var(--sage) 0%, var(--sage-deep) 100%);
+  box-shadow: var(--shadow-md);
+}
+
+.env__card {
+  position: absolute;
+  left: 7%; right: 7%; top: 9%; bottom: 9%;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  gap: .5rem;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  background: var(--ivory);
+  opacity: 0;
+  transform: translateY(0);
+  transition: transform .8s var(--ease) .3s, opacity .25s linear .3s;
+}
+.env__card-mono {
+  font-family: var(--serif);
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--sage-deep);
+}
+.env__card-mono em { font-style: italic; color: var(--gold); }
+.env__card-text {
+  font-family: var(--serif);
+  font-size: .62rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.gate.is-open .env__card { opacity: 1; transform: translateY(-70%); }
+
+/* Front pocket: notched at the top so the flap nests into it */
+.env__front {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: 10px;
+  background: linear-gradient(196deg, var(--sage-soft) 0%, var(--sage) 100%);
+  clip-path: polygon(0 0, 50% 46%, 100% 0, 100% 100%, 0 100%);
+}
+
+.env__flap {
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 46%;
+  z-index: 4;
+  background: linear-gradient(180deg, var(--sage-soft) 0%, var(--sage) 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  /* Backface stays visible on purpose: past 90° we're looking at the inside
+     of the flap, which is what an actually-open envelope shows. */
+  /* z-index steps mid-rotation so the opened flap drops behind the card */
+  transition: transform .7s ease-in-out, z-index 0s linear .35s;
+}
+.gate.is-open .env__flap { transform: rotateX(-172deg); z-index: 1; }
+
+.env__seal {
+  position: absolute;
+  z-index: 5;
+  left: 50%; top: 54%;
+  translate: -50% -50%;
+  width: clamp(58px, 17vw, 74px);
+  height: clamp(58px, 17vw, 74px);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: radial-gradient(circle at 34% 28%, #DCC08A 0%, var(--gold) 70%);
+  box-shadow: 0 4px 14px rgba(46, 50, 44, .22), inset 0 -2px 6px rgba(46, 50, 44, .18);
+  transition: opacity .3s var(--ease), scale .3s var(--ease);
+}
+.gate.is-open .env__seal { opacity: 0; scale: .82; }
+
+/* Doubled class: `.monogram` is declared later in this file and would
+   otherwise win on source order and blow the seal up to hero size. */
+.monogram.monogram--seal {
+  font-size: clamp(1rem, 3.2vw, 1.3rem);
+  line-height: 1;
+  margin: 0;
+  color: var(--ivory);
+}
+.monogram.monogram--seal .monogram__amp {
+  color: var(--cream);
+  opacity: .85;
+  font-size: .5em;
+}
+
+.gate__skip {
+  position: absolute;
+  bottom: clamp(1.5rem, 5vw, 2.5rem);
+  left: 50%;
+  translate: -50% 0;
+  background: none;
+  border: 0;
+  padding: .5rem 1rem;
+  font-family: var(--sans);
+  font-size: .72rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s var(--ease), color .25s var(--ease);
+}
+.gate__skip.is-visible { opacity: .6; pointer-events: auto; }
+.gate__skip:hover { color: var(--sage-deep); opacity: 1; }
+
 /* ── Layout ─────────────────────────────────────────────────── */
 
 .wrap {

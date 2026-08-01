@@ -17,8 +17,42 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="assets/styles.css" />
+
+<script>
+  /* Runs before first paint: only gate the page when JS is actually alive,
+     so the site stays fully visible if this script never loads. */
+  document.documentElement.classList.add("js", "gate-active");
+</script>
 </head>
 <body>
+
+<!-- ── Envelope intro gate ────────────────────────────────────────── -->
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-label="Open your wedding invitation">
+  <button class="gate__open" id="gate-open" type="button">
+    <span class="envelope" aria-hidden="true">
+      <span class="env__back"></span>
+
+      <span class="env__card">
+        <span class="env__card-mono">A<em>&amp;</em>R</span>
+        <span class="env__card-text">You’re Invited</span>
+      </span>
+
+      <span class="env__front"></span>
+      <span class="env__flap"></span>
+
+      <span class="env__seal">
+        <span class="monogram monogram--seal">
+          <span class="monogram__letter">A</span><span class="monogram__amp">&amp;</span><span class="monogram__letter">R</span>
+        </span>
+      </span>
+    </span>
+    <span class="gate__label">Open the Invitation</span>
+  </button>
+
+  <button class="gate__skip" id="gate-skip" type="button">Skip intro</button>
+</div>
+
+<div class="site" id="site">
 
 <a class="skip-link" href="#rsvp">Skip to RSVP</a>
 
@@ -69,7 +103,7 @@
 <section class="section section--tint" id="countdown">
   <div class="wrap wrap--narrow center">
     <p class="eyebrow reveal">Counting down</p>
-    <h2 class="reveal">Until we say <em>I do</em></h2>
+    <h2 class="reveal">Until we <em>celebrate together</em></h2>
 
     <div class="countdown reveal" id="clock" role="timer" aria-live="off">
       <div class="unit"><span class="unit__num" id="cd-days">—</span><span class="unit__label">Days</span></div>
@@ -249,6 +283,8 @@
     <p class="footer__meta">Ahmed &amp; Rawan &middot; 10 October 2026 &middot; Dunes Club, Amman</p>
   </div>
 </footer>
+
+</div><!-- /.site -->
 
 <script src="assets/app.js"></script>
 </body>
