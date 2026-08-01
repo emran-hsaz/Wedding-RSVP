@@ -45,12 +45,33 @@ the same code already built fine before.
 
    | What the banner says | What to do |
    | --- | --- |
+   | "GitHub could not associate the committer with a GitHub user" | Commit identity problem — see below. **Do not upgrade to Pro.** |
    | Free / Hobby usage limit reached | Wait for the limit to reset, or remove unused projects under **Settings → General → Delete Project** |
    | Spend limit / billing hold | **Settings → Billing** on the team, clear the hold |
-   | Deployment from an unauthorized Git author | **Settings → Git → Ignored Build Step / Git authors**, allow the author |
    | Project paused | **Settings → General**, unpause |
 
 3. After fixing, go to **Deployments** → **⋯** on that row → **Redeploy**.
+
+### "GitHub could not associate the committer with a GitHub user"
+
+Vercel Hobby only builds commits whose committer it can match to a real GitHub
+user. If a commit is made with an email that isn't attached to the GitHub
+account, Vercel treats it as an outside collaborator and blocks the build — then
+suggests upgrading to Pro. **Upgrading is not the fix and is not needed.**
+
+The fix is to commit with an email GitHub recognises. This repo is configured to
+use the account's GitHub noreply address:
+
+```bash
+git config user.name  "Emran Abdalla"
+git config user.email "139568201+emran-hsaz@users.noreply.github.com"
+```
+
+That setting is local to this folder and already applied. Any commit made from
+here now builds normally. Blocked deployments stay blocked forever — they can't
+be rescued by Redeploy, because the commit itself carries the bad identity. Push
+a new commit with the correct identity instead, and the code from the blocked
+commits comes along with it.
 
 ### Fastest workaround if you just need it live now
 
