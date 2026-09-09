@@ -112,8 +112,10 @@ The page uses DM Sans headings and Inter body text, light blush surfaces with
 rose accents and dark plum text, a locally hosted WebP still life,
 an animated invitation card, staggered section reveals, a floating date seal,
 subtle desktop image parallax, animated countdown updates, and a navigation
-progress line. The intro appears once per tab and is skipped for direct section
-links and visitors who request reduced motion. Keyboard users can skip with
+progress line. The invitation appears on every page load, including direct section links.
+Click the card or swipe down at least 90 pixels to open it. The rose-gold cover
+folds in 3D as you drag; short or sideways gestures return it to its closed state.
+Reduced-motion visitors keep both opening controls without the 3D animation. Keyboard users can skip with
 Escape; focus stays inside the opening dialog until it closes.
 
 Layouts switch to a single column on phones. The RSVP action remains available
@@ -129,7 +131,7 @@ node --test tests/site.test.cjs
 
 The tests exercise input validation, exact field values, failed and timed-out
 requests, repeat submissions, countdown completion, dialog keyboard handling,
-reduced-motion bypass, and local asset references. All form requests are mocked.
+reduced-motion opening, and local asset references. All form requests are mocked.
 These code checks do not replace visual browser QA.
 
 ## Deploy

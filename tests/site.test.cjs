@@ -25,7 +25,10 @@ function fixture({ seen = true, reduced = false, hash = '', now = '2026-09-10T17
     setAttribute(name, value) { this.attributes[name] = value; }
     removeAttribute(name) { delete this.attributes[name]; }
     addEventListener(name, callback) { this.listeners[name] = callback; }
-    fire(name, extra = {}) { return this.listeners[name]?.({ preventDefault() {}, stopPropagation() {}, ...extra }); }
+    fire(name, extra = {}) { return this.listeners[name]?.({ type: name, preventDefault() {}, stopPropagation() {}, ...extra }); }
+    setPointerCapture(id) { this.pointer = id; }
+    hasPointerCapture(id) { return this.pointer === id; }
+    releasePointerCapture() { this.pointer = null; }
     focus() { document.activeElement = this; }
     scrollIntoView(options) { this.lastScroll = options; }
     appendChild() {}
@@ -168,9 +171,48 @@ test('invitation traps focus, supports Escape, and restores the page', () => {
   assert.equal(f.document.activeElement, f.nodes['hero-title']);
 });
 
-test('reduced motion and malformed direct links bypass the intro safely', () => {
-  assert.equal(fixture({ seen: false, reduced: true }).nodes.gate.removed, true);
-  assert.equal(fixture({ seen: false, hash: '#[invalid%' }).nodes.gate.removed, true);
+test('every visit starts closed, including returning visitors and direct links', () => {
+  for (const options of [{ seen: true }, { hash: '#rsvp' }, { reduced: true }]) {
+    const f = fixture(options);
+    assert.equal(f.nodes.gate.hidden, false);
+    assert.equal(f.nodes.site.inert, true);
+  }
+});
+
+test('click opens in 3D; reduced motion opens immediately without motion', () => {
+  const f = fixture(); f.nodes['gate-open'].fire('click', { detail: 1 });
+  assert.ok(f.nodes.gate.classes.has('is-open'));
+  assert.equal(f.nodes.site.inert, true);
+  [...f.timeouts.values()].find(t => t.delay === 1100).fn();
+  assert.equal(f.nodes.site.inert, false);
+  const calm = fixture({ reduced: true, hash: '#[invalid%' });
+  calm.nodes['gate-open'].fire('click', { detail: 0 });
+  assert.equal(calm.nodes.site.inert, false);
+});
+
+test('downward swipe opens the cover and duplicate click cannot restart it', () => {
+  const f = fixture(), button = f.nodes['gate-open'];
+  button.fire('pointerdown', { pointerId: 1, clientX: 100, clientY: 100, button: 0 });
+  button.fire('pointermove', { pointerId: 1, clientX: 104, clientY: 210 });
+  assert.ok(f.nodes.gate.classes.has('is-dragging'));
+  button.fire('pointerup', { pointerId: 1, clientX: 104, clientY: 210 });
+  button.fire('click', { detail: 1 });
+  assert.ok(f.nodes.gate.classes.has('is-open'));
+  assert.equal([...f.timeouts.values()].filter(t => t.delay === 1100).length, 1);
+});
+
+test('short, upward, sideways, and cancelled swipes do not open the invitation', () => {
+  for (const [x, y, event] of [[102,130,'pointerup'],[100,0,'pointerup'],[240,210,'pointerup'],[100,230,'pointercancel']]) {
+    const f = fixture(), button = f.nodes['gate-open'];
+    button.fire('pointerdown', { pointerId: 1, clientX: 100, clientY: 100, button: 0 });
+    button.fire('pointermove', { pointerId: 1, clientX: x, clientY: y });
+    button.fire(event, { pointerId: 1, clientX: x, clientY: y });
+    button.fire('click', { detail: 1 });
+    assert.equal(f.nodes.gate.classes.has('is-open'), false);
+    assert.equal(f.nodes.gate.classes.has('is-dragging'), false);
+    button.fire('click', { detail: 0 });
+    assert.ok(f.nodes.gate.classes.has('is-open'), 'keyboard opening remains available');
+  }
 });
 
 test('guest hints follow party size without enabling unsupported Google options', () => {

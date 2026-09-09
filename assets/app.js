@@ -50,8 +50,8 @@
   }
   function whenGateDone(fn) { gateDone ? fn() : gateWaiters.push(fn); }
 
-  /* One invitation opening per tab. Direct section links and reduced-motion
-     visitors reach the content immediately. Storage is optional. */
+  /* Always begin with the invitation. Click or a deliberate downward swipe
+     opens it; reduced motion keeps the interaction without the 3D transition. */
   (function invitationGate() {
     var gate = document.getElementById("gate");
     var site = document.getElementById("site");
@@ -63,14 +63,6 @@
 
     var openBtn = document.getElementById("gate-open");
     var skipBtn = document.getElementById("gate-skip");
-    var seen = false;
-    try { seen = sessionStorage.getItem("ar-invitation-opened") === "yes"; } catch (_) {}
-    if (seen || location.hash || motionPreference.matches) {
-      gate.remove();
-      markGateDone();
-      return;
-    }
-
     var opened = false, finished = false;
     gate.hidden = false;
     site.inert = true;
@@ -93,7 +85,6 @@
       gate.inert = true;
       site.inert = false;
       document.documentElement.classList.remove("gate-active");
-      try { sessionStorage.setItem("ar-invitation-opened", "yes"); } catch (_) {}
 
       // Land where the visitor asked to land — top by default, or the
       // section named in the URL hash — before anything becomes visible.
@@ -118,19 +109,59 @@
     }
 
     function open() {
-      if (opened) return;
+      if (opened || finished) return;
       opened = true;
+      gate.classList.remove("is-dragging");
       gate.classList.add("is-open");
-
-      // Once it's opening, a tap anywhere cuts straight to the site. Bound on
-      // a delay so the very click that opened the envelope doesn't bubble up
-      // and skip the animation it just started.
-      setTimeout(function () { gate.addEventListener("click", reveal); }, 300);
-
-      setTimeout(reveal, motionPreference.matches ? 0 : 650);
+      if (motionPreference.matches) reveal();
+      else setTimeout(reveal, 1100);
     }
 
-    openBtn.addEventListener("click", open);
+    var gesture = null, suppressClick = false;
+    function resetPull() {
+      gate.classList.remove("is-dragging");
+      gate.style.setProperty("--pull", "0");
+    }
+    openBtn.addEventListener("pointerdown", function (event) {
+      if (opened || finished || event.isPrimary === false || (event.button !== undefined && event.button !== 0)) return;
+      gesture = { id: event.pointerId, x: event.clientX, y: event.clientY, distance: 0, horizontal: false };
+      suppressClick = false;
+      openBtn.setPointerCapture(event.pointerId);
+    });
+    openBtn.addEventListener("pointermove", function (event) {
+      if (!gesture || gesture.id !== event.pointerId || opened) return;
+      var dx = event.clientX - gesture.x, dy = event.clientY - gesture.y;
+      gesture.distance = Math.max(gesture.distance, Math.abs(dx), Math.abs(dy));
+      if (Math.abs(dx) > 18 && Math.abs(dx) > Math.abs(dy)) gesture.horizontal = true;
+      if (gesture.horizontal || dy < 0) { resetPull(); return; }
+      if (dy > 8) {
+        gate.classList.add("is-dragging");
+        gate.style.setProperty("--pull", String(Math.min(dy / 120, 1)));
+      }
+    });
+    function endGesture(event) {
+      if (!gesture || gesture.id !== event.pointerId) return;
+      var dy = event.clientY - gesture.y;
+      var shouldOpen = event.type !== "pointercancel" && !gesture.horizontal && dy >= 90 && Math.abs(event.clientX - gesture.x) < dy * .8;
+      suppressClick = gesture.distance > 8 || Math.abs(dy) > 8 || event.type === "pointercancel";
+      gesture = null;
+      if (openBtn.hasPointerCapture(event.pointerId)) openBtn.releasePointerCapture(event.pointerId);
+      if (shouldOpen) open();
+      else resetPull();
+    }
+    openBtn.addEventListener("pointerup", endGesture);
+    openBtn.addEventListener("pointercancel", endGesture);
+    openBtn.addEventListener("lostpointercapture", function () {
+      if (!gesture) return;
+      gesture = null;
+      suppressClick = true;
+      resetPull();
+    });
+    openBtn.addEventListener("click", function (event) {
+      // Ignore the synthetic click following a drag, but keep Enter/Space usable.
+      if (suppressClick && event.detail !== 0) { suppressClick = false; return; }
+      open();
+    });
     skipBtn.addEventListener("click", function (e) {
       e.stopPropagation();
       reveal();

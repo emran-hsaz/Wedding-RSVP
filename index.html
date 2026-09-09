@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/wedding-still-life.webp" as="image" />
-<link rel="stylesheet" href="assets/styles.css" />
+<link rel="stylesheet" href="assets/styles.css?v=rose-gold-open-1" />
 
 
 <noscript><style>#rsvp-form > :not(.form-heading):not(.form__fallback) { display:none; }</style></noscript>
@@ -29,14 +29,18 @@
   <div class="gate__intro"><p class="eyebrow">An invitation, with love</p>
     <p class="gate__names" id="gate-title">Ahmed <span>&amp;</span> Rawan</p>
     <p class="gate__date">10 October 2026 · Amman, Jordan</p></div>
-  <button class="gate__open" id="gate-open" type="button">
+  <button class="gate__open" id="gate-open" type="button" aria-describedby="gate-swipe-hint">
     <span class="invitation-card" aria-hidden="true">
-      <span class="invitation-card__top">Together with our families</span>
-      <span class="invitation-card__mono">A<i>&amp;</i>R</span>
-      <span class="invitation-card__rule"></span>
-      <span class="invitation-card__bottom">The beginning of forever</span>
+      <span class="invitation-card__inside"><span>You’re invited</span><strong>Ahmed &amp; Rawan</strong><span>10 October 2026</span></span>
+      <span class="invitation-card__cover">
+        <span class="invitation-card__top">Together with our families</span>
+        <span class="invitation-card__mono">A<i>&amp;</i>R</span>
+        <span class="invitation-card__rule"></span>
+        <span class="invitation-card__bottom">The beginning of forever</span>
+      </span>
     </span>
-    <span class="gate__label">Open your invitation <span aria-hidden="true">↗</span></span>
+    <span class="gate__label">Click to open <span aria-hidden="true">↗</span></span>
+    <span class="gate__swipe" id="gate-swipe-hint">or swipe down <span aria-hidden="true">↓</span></span>
   </button>
   <button class="gate__skip" id="gate-skip" type="button">Skip to the celebration</button>
 </div>
@@ -267,6 +271,6 @@
 
 </div><!-- /.site -->
 
-<script src="assets/app.js"></script>
+<script src="assets/app.js?v=rose-gold-open-1"></script>
 </body>
 </html>
