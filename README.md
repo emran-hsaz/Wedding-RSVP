@@ -11,7 +11,7 @@ RSVP deadline: **26 September 2026**.
 
 ```
 index.html          hero · countdown · details · venue · RSVP · footer
-assets/styles.css   olive & ivory responsive design system, motion, reduced-motion support
+assets/styles.css   light pink & rose responsive design system, motion, reduced-motion support
 assets/app.js       invitation, countdown, scroll reveal, Google Forms submission
 assets/wedding-still-life.webp  original silk-and-roses hero artwork (116 KB)
 tests/site.test.cjs isolated behavior and asset checks, no live RSVP submissions
@@ -108,7 +108,8 @@ python3 -m http.server 8000   # then open http://localhost:8000
 
 ## Design and motion
 
-The page uses editorial name typography, a locally hosted WebP still life,
+The page uses DM Sans headings and Inter body text, light blush surfaces with
+rose accents and dark plum text, a locally hosted WebP still life,
 an animated invitation card, staggered section reveals, a floating date seal,
 subtle desktop image parallax, animated countdown updates, and a navigation
 progress line. The intro appears once per tab and is skipped for direct section
