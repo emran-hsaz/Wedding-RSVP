@@ -5,6 +5,13 @@
 (function () {
   "use strict";
 
+  var motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+  function scrollBehavior() { return motionPreference.matches ? "auto" : "smooth"; }
+  function hashTarget() {
+    try { return document.getElementById(decodeURIComponent(location.hash.slice(1))); }
+    catch (_) { return null; }
+  }
+
   /* ── Google Form wiring ───────────────────────────────────────
      Entry IDs extracted from the live form's FB_PUBLIC_LOAD_DATA_
      https://docs.google.com/forms/d/e/<FORM_ID>/viewform
@@ -43,12 +50,9 @@
   }
   function whenGateDone(fn) { gateDone ? fn() : gateWaiters.push(fn); }
 
-  /* ── Envelope intro gate ──────────────────────────────────────
-     Shown on every fresh load — it's part of the invitation. Opening
-     requires a deliberate click; a "Skip intro" affordance fades in
-     after 4s so nobody is ever stuck waiting.
-  ------------------------------------------------------------- */
-  (function envelopeGate() {
+  /* One invitation opening per tab. Direct section links and reduced-motion
+     visitors reach the content immediately. Storage is optional. */
+  (function invitationGate() {
     var gate = document.getElementById("gate");
     var site = document.getElementById("site");
     if (!gate || !site) {
@@ -59,40 +63,63 @@
 
     var openBtn = document.getElementById("gate-open");
     var skipBtn = document.getElementById("gate-skip");
-    var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var seen = false;
+    try { seen = sessionStorage.getItem("ar-invitation-opened") === "yes"; } catch (_) {}
+    if (seen || location.hash || motionPreference.matches) {
+      gate.remove();
+      markGateDone();
+      return;
+    }
 
-    var opened = false, finished = false, skipTimer;
+    var opened = false, finished = false;
+    gate.hidden = false;
+    site.inert = true;
+    document.documentElement.classList.add("gate-active");
+    openBtn.focus({ preventScroll: true });
+
+    function handleKeys(event) {
+      if (event.key === "Escape") { event.preventDefault(); reveal(); }
+      if (event.key === "Tab") {
+        event.preventDefault();
+        (document.activeElement === openBtn ? skipBtn : openBtn).focus();
+      }
+    }
+    gate.addEventListener("keydown", handleKeys);
 
     function reveal() {
       if (finished) return;
       finished = true;
-      clearTimeout(skipTimer);
-
       gate.classList.add("is-leaving");
+      gate.inert = true;
+      site.inert = false;
       document.documentElement.classList.remove("gate-active");
+      try { sessionStorage.setItem("ar-invitation-opened", "yes"); } catch (_) {}
 
       // Land where the visitor asked to land — top by default, or the
       // section named in the URL hash — before anything becomes visible.
-      var target = location.hash && document.querySelector(location.hash);
-      if (target) target.scrollIntoView();
-      else window.scrollTo(0, 0);
+      var target = hashTarget();
+      if (target) target.scrollIntoView({ behavior: "instant" });
+      else window.scrollTo({ top: 0, behavior: "instant" });
 
       site.classList.add("is-revealed");
 
       // Hero copy starts cascading while the camera is still settling — the
       // overlap is what stops it feeling like two separate animations.
-      setTimeout(markGateDone, calm ? 0 : 420);
+      markGateDone();
+      var focusTarget = target || document.getElementById("hero-title");
+      if (focusTarget) {
+        focusTarget.setAttribute("tabindex", "-1");
+        focusTarget.focus({ preventScroll: true });
+      }
 
       setTimeout(function () {
         if (gate.parentNode) gate.parentNode.removeChild(gate);
-      }, calm ? 0 : 1100);
+      }, motionPreference.matches ? 0 : 750);
     }
 
     function open() {
       if (opened) return;
       opened = true;
-      clearTimeout(skipTimer);
-      skipBtn.classList.remove("is-visible");
       gate.classList.add("is-open");
 
       // Once it's opening, a tap anywhere cuts straight to the site. Bound on
@@ -100,9 +127,7 @@
       // and skip the animation it just started.
       setTimeout(function () { gate.addEventListener("click", reveal); }, 300);
 
-      // Flap lifts (0.7s) → card rises clear of the envelope → the camera
-      // pushes through it onto the site. ~2.4s click to fully settled.
-      setTimeout(reveal, calm ? 0 : 1250);
+      setTimeout(reveal, motionPreference.matches ? 0 : 650);
     }
 
     openBtn.addEventListener("click", open);
@@ -111,9 +136,6 @@
       reveal();
     });
 
-    skipTimer = setTimeout(function () {
-      if (!opened) skipBtn.classList.add("is-visible");
-    }, 4000);
   })();
 
   /* ── Countdown ────────────────────────────────────────────────
@@ -140,33 +162,55 @@
 
     if (diff <= 0) {
       clock.classList.add("is-done");
-      clock.innerHTML =
-        '<div class="unit">Today is the day &#10022;</div>';
+      clock.innerHTML = Date.now() < new Date("2026-10-11T00:00:00+03:00").getTime()
+        ? '<div class="unit">Today is the day &#10022;</div>'
+        : '<div class="unit">Thank you for celebrating with us.</div>';
       clearInterval(timer);
       return;
     }
 
     var s = Math.floor(diff / 1000);
-    out.days.textContent  = String(Math.floor(s / 86400));
-    out.hours.textContent = pad(Math.floor(s / 3600) % 24);
-    out.mins.textContent  = pad(Math.floor(s / 60) % 60);
-    out.secs.textContent  = pad(s % 60);
+    var values = { days: pad(Math.floor(s / 86400)), hours: pad(Math.floor(s / 3600) % 24), mins: pad(Math.floor(s / 60) % 60), secs: pad(s % 60) };
+    Object.keys(values).forEach(function (key) {
+      if (out[key].textContent === values[key]) return;
+      out[key].textContent = values[key];
+      if (!motionPreference.matches) {
+        out[key].classList.remove("is-ticking");
+        requestAnimationFrame(function () { out[key].classList.add("is-ticking"); });
+      }
+    });
   }
 
   var timer;
   if (clock && out.days) {
-    tick();
     timer = setInterval(tick, 1000);
+    tick();
   }
 
   /* ── Sticky nav shading ──────────────────────────────────────── */
   var nav = document.getElementById("nav");
+  var heroImage = document.querySelector(".hero__image");
+  var pendingScroll = false;
   function onScroll() {
+    if (pendingScroll) return;
+    pendingScroll = true;
+    requestAnimationFrame(updateScroll);
+  }
+  function updateScroll() {
+    pendingScroll = false;
     nav.classList.toggle("is-stuck", window.scrollY > 40);
+    var range = document.documentElement.scrollHeight - window.innerHeight;
+    nav.style.setProperty("--progress", range > 0 ? Math.min(1, Math.max(0, window.scrollY / range)) : 0);
+    if (heroImage) {
+      var offset = !motionPreference.matches && window.innerWidth > 760 ? Math.min(14, window.scrollY * .035) : 0;
+      heroImage.style.setProperty("--parallax", offset + "px");
+    }
   }
   if (nav) {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    motionPreference.addEventListener("change", onScroll);
   }
 
   /* ── Scroll reveal ───────────────────────────────────────────── */
@@ -182,7 +226,9 @@
         el.classList.add("is-visible");
         io.unobserve(el);
       });
-    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    }, { threshold: 0.08, rootMargin: "0px 0px -20px 0px" });
+
+    document.documentElement.classList.add("motion-ready");
 
     // Held until the intro finishes, otherwise the hero would quietly
     // animate in behind the envelope and be fully settled on arrival.
@@ -191,6 +237,20 @@
     });
   } else {
     revealables.forEach(function (el) { el.classList.add("is-visible"); });
+  }
+
+  // Keep the current section visible in the letterhead without a scroll loop.
+  if ("IntersectionObserver" in window) {
+    var sectionObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        document.querySelectorAll(".nav__links a").forEach(function (link) {
+          if (link.hash === "#" + entry.target.id) link.setAttribute("aria-current", "location");
+          else link.removeAttribute("aria-current");
+        });
+      });
+    }, { rootMargin: "-20% 0px -45% 0px", threshold: 0 });
+    document.querySelectorAll("main > section").forEach(function (section) { sectionObserver.observe(section); });
   }
 
   /* ── RSVP form ───────────────────────────────────────────────── */
@@ -261,9 +321,13 @@
 
     if (name === "attendance") {
       form.querySelector("#attendance-group").classList.toggle("is-invalid", on);
+      form.querySelectorAll('input[name="attendance"]').forEach(function (radio) { radio.setAttribute("aria-invalid", String(on)); });
     } else {
       var input = form.querySelector("#" + name);
-      if (input) input.classList.toggle("is-invalid", on);
+      if (input) {
+        input.classList.toggle("is-invalid", on);
+        input.setAttribute("aria-invalid", String(on));
+      }
     }
   }
   function clearError(name) { showError(name, false); }
@@ -334,19 +398,20 @@
   function successMessage(v) {
     var first = v.name.split(/\s+/)[0];
     if (v.attendance === "Yes !!!!!!!") {
-      return "Thank you, " + first + " — your seat is saved. We can’t wait to " +
+      return "Thank you, " + first + " — your reply has been sent. We can’t wait to " +
              "celebrate with you on 10 October.";
     }
     if (v.attendance === "Unfortunately, can't make it") {
       return "Thank you for letting us know, " + first + ". You’ll be missed — " +
              "we’ll be thinking of you on the day.";
     }
-    return "Thanks, " + first + " — we’ve noted that you’re still deciding. " +
+    return "Thanks, " + first + " — your reply has been sent. " +
            "Just resubmit this form once you know, before 26 September.";
   }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
+    if (submitBtn.disabled) return;
 
     var v = validate();
     if (!v) {
@@ -361,15 +426,29 @@
     submitBtn.classList.add("is-loading");
     submitBtn.querySelector(".btn__text").textContent = "Sending…";
 
-    // Google Forms doesn't send CORS headers, so the response is opaque:
-    // we can't read status or body. Post it and confirm optimistically.
-    fetch(ENDPOINT, { method: "POST", mode: "no-cors", body: buildPayload(v) })
-      .catch(function () { /* opaque/no-cors — nothing meaningful to handle */ })
+    // A resolved opaque response means dispatch, not verified acceptance.
+    // Network errors must never be displayed as successful RSVPs.
+    var controller = new AbortController();
+    var timeout = setTimeout(function () { controller.abort(); }, 20000);
+    fetch(ENDPOINT, { method: "POST", mode: "no-cors", body: buildPayload(v), signal: controller.signal })
       .then(function () {
         thanksBody.textContent = successMessage(v);
         form.hidden = true;
         thanks.hidden = false;
-        thanks.scrollIntoView({ behavior: "smooth", block: "center" });
+        thanks.focus({ preventScroll: true });
+        thanks.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
+      })
+      .catch(function (error) {
+        statusEl.textContent = error.name === "AbortError"
+          ? "Delivery is taking longer than expected. Your reply may have been sent. You can use our RSVP form below if you’re unsure."
+          : "We couldn’t send your reply. Please check your connection and try again, or open our RSVP form below.";
+        statusEl.classList.add("is-error");
+      })
+      .finally(function () {
+        clearTimeout(timeout);
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("is-loading");
+        submitBtn.querySelector(".btn__text").textContent = "Send with love";
       });
   });
 
@@ -381,10 +460,11 @@
     statusEl.textContent = "";
     submitBtn.disabled = false;
     submitBtn.classList.remove("is-loading");
-    submitBtn.querySelector(".btn__text").textContent = "Send RSVP";
+    submitBtn.querySelector(".btn__text").textContent = "Send with love";
+    statusEl.classList.remove("is-error");
     thanks.hidden = true;
     form.hidden = false;
-    form.scrollIntoView({ behavior: "smooth", block: "start" });
-    form.fullName.focus();
+    form.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+    form.fullName.focus({ preventScroll: true });
   });
 })();

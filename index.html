@@ -5,64 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Ahmed &amp; Rawan — 10 October 2026</title>
 <meta name="description" content="Ahmed Abdalla &amp; Rawan Mazen invite you to celebrate their wedding on Saturday, 10 October 2026 at Dunes Club, Amman, Jordan. Please RSVP." />
-<meta name="theme-color" content="#5F6F52" />
+<meta name="theme-color" content="#303b2d" />
 
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Ahmed &amp; Rawan — 10 October 2026" />
 <meta property="og:description" content="Join us at Dunes Club, Amman, Jordan. Please RSVP by 26 September 2026." />
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%235F6F52'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='27' fill='%23FBF8F3' text-anchor='middle'%3EA%26R%3C/text%3E%3C/svg%3E" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23303b2d'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='27' fill='%23FBF8F3' text-anchor='middle'%3EA%26R%3C/text%3E%3C/svg%3E" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Pinyon+Script&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Pinyon+Script&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="preload" href="assets/wedding-still-life.webp" as="image" />
 <link rel="stylesheet" href="assets/styles.css" />
 
-<script>
-  /* Runs before first paint: only gate the page when JS is actually alive,
-     so the site stays fully visible if this script never loads. */
-  document.documentElement.classList.add("js", "gate-active");
-</script>
+
+<noscript><style>#rsvp-form > :not(.form-heading):not(.form__fallback) { display:none; }</style></noscript>
 </head>
 <body>
 
-<!-- ── Envelope intro gate ────────────────────────────────────────── -->
-<div class="gate" id="gate" role="dialog" aria-modal="true" aria-label="Open your wedding invitation">
-  <div class="gate__intro">
-    <p class="gate__from">A Wedding Invitation From</p>
-    <p class="gate__names">Ahmed <span class="gate__amp">&amp;</span> Rawan</p>
-  </div>
-
+<!-- ── Invitation intro, progressively enhanced by app.js ──────────── -->
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title" hidden>
+  <div class="gate__intro"><p class="eyebrow">An invitation, with love</p>
+    <p class="gate__names" id="gate-title">Ahmed <span>&amp;</span> Rawan</p>
+    <p class="gate__date">10 October 2026 · Amman, Jordan</p></div>
   <button class="gate__open" id="gate-open" type="button">
-    <span class="envelope" aria-hidden="true">
-      <span class="env__back"></span>
-
-      <span class="env__card">
-        <span class="env__card-mono">A<em>&amp;</em>R</span>
-        <span class="env__card-text">You’re Invited</span>
-      </span>
-
-      <span class="env__front"></span>
-      <span class="env__flap"></span>
-
-      <span class="env__seal">
-        <!-- Wax seal engraving: beaded ring, cusped arch, botanical sprig, initials -->
-        <svg class="seal" viewBox="0 0 100 128" aria-hidden="true" focusable="false">
-          <ellipse class="seal__beads" cx="50" cy="64" rx="39" ry="51" />
-          <ellipse class="seal__ring"  cx="50" cy="64" rx="33" ry="45" />
-          <path class="seal__arch" d="M30 92 L30 56 C30 43 38 34 46 37 C47 28 53 28 54 37 C62 34 70 43 70 56 L70 92" />
-          <path class="seal__stem"  d="M50 84 L50 58" />
-          <path class="seal__bud"   d="M50 58 C43 53 43 41 50 36 C57 41 57 53 50 58 Z" />
-          <path class="seal__leaf"  d="M50 78 C41 76 35 70 34 62 C42 64 49 70 50 78 Z" />
-          <path class="seal__leaf"  d="M50 74 C59 72 65 66 66 58 C58 60 51 66 50 74 Z" />
-          <text class="seal__mono" x="50" y="107" text-anchor="middle">A &amp; R</text>
-        </svg>
-      </span>
+    <span class="invitation-card" aria-hidden="true">
+      <span class="invitation-card__top">Together with our families</span>
+      <span class="invitation-card__mono">A<i>&amp;</i>R</span>
+      <span class="invitation-card__rule"></span>
+      <span class="invitation-card__bottom">The beginning of forever</span>
     </span>
-    <span class="gate__label">Open the Invitation</span>
+    <span class="gate__label">Open your invitation <span aria-hidden="true">↗</span></span>
   </button>
-
-  <button class="gate__skip" id="gate-skip" type="button">Skip intro</button>
+  <button class="gate__skip" id="gate-skip" type="button">Skip to the celebration</button>
 </div>
 
 <div class="site" id="site">
@@ -71,134 +47,126 @@
 
 <header class="nav" id="nav">
   <a class="nav__mark" href="#hero" aria-label="Ahmed and Rawan — back to top">A<span>&amp;</span>R</a>
+  <span class="nav__date">10 / 10 / 2026</span>
   <nav class="nav__links" aria-label="Section navigation">
-    <a href="#countdown">Countdown</a>
-    <a href="#details">Details</a>
-    <a href="#venue">Venue</a>
-    <a href="#rsvp" class="nav__cta">RSVP</a>
+    <a href="#details">The day</a>
+    <a href="#venue">The place</a>
+    <a href="#rsvp" class="nav__cta">RSVP <span aria-hidden="true">↗</span></a>
   </nav>
+<span class="nav__progress" aria-hidden="true"></span>
 </header>
+<main>
 
 <!-- ── Hero ───────────────────────────────────────────────────────── -->
-<section class="hero" id="hero">
-  <div class="hero__bg" aria-hidden="true"></div>
-
+<section class="hero" id="hero" aria-labelledby="hero-title">
   <div class="hero__inner">
-    <p class="hero__eyebrow reveal">Together with their families</p>
-
-    <div class="monogram reveal" aria-label="A and R">
-      <span class="monogram__letter">A</span>
-      <span class="monogram__amp">&amp;</span>
-      <span class="monogram__letter">R</span>
-    </div>
-
-    <h1 class="hero__names reveal">
-      Ahmed Abdalla
+    <p class="eyebrow reveal">Together with their families</p>
+    <h1 class="hero__names reveal" id="hero-title">
+      <span class="hero__person">Ahmed <span class="hero__surname">Abdalla</span></span>
       <span class="hero__conj">and</span>
-      Rawan Mazen
+      <span class="hero__person">Rawan <span class="hero__surname">Mazen</span></span>
     </h1>
-
-    <div class="rule reveal" aria-hidden="true"><span></span>&#10022;<span></span></div>
-
-    <p class="hero__date reveal">
-      <span>Saturday</span>
-      <strong>10 · 10 · 2026</strong>
-      <span>Amman, Jordan</span>
-    </p>
-
-    <a class="btn btn--solid reveal" href="#rsvp">RSVP</a>
+    <p class="hero__invitation reveal">Joyfully invite you to celebrate<br />the beginning of their forever.</p>
+    <div class="hero__date reveal"><span>Saturday, 10 October 2026</span><span>Dunes Club · Amman, Jordan</span></div>
+    <div class="hero__actions reveal"><a class="btn btn--solid" href="#rsvp">Join the celebration <span aria-hidden="true">↗</span></a><span class="hero__reply">Kindly reply by 26 September</span></div>
   </div>
-
-  <a class="hero__scroll" href="#countdown" aria-label="Scroll to countdown"><span></span></a>
+  <div class="hero__visual reveal">
+    <div class="hero__image-wrap">
+      <img class="hero__image" src="assets/wedding-still-life.webp" width="1086" height="1448" fetchpriority="high" alt="Ivory silk, white garden roses, and olive branches in warm afternoon light" />
+      <div class="hero__image-frame" aria-hidden="true"></div>
+      <p class="hero__image-script" aria-hidden="true">With love,<br /><span>always.</span></p>
+      <span class="hero__image-caption" aria-hidden="true">A &amp; R — THE WEDDING</span>
+    </div>
+    <div class="hero__stamp" aria-label="10 October 2026"><span>Save the date</span><strong>10.10</strong><span>2026</span></div>
+  </div>
+  <a class="hero__scroll" href="#countdown"><span class="hero__scroll-line" aria-hidden="true"></span>A beautiful day awaits</a>
 </section>
 
 <!-- ── Countdown ──────────────────────────────────────────────────── -->
-<section class="section section--tint" id="countdown">
-  <div class="wrap wrap--narrow center">
-    <p class="eyebrow reveal">Counting down</p>
-    <h2 class="reveal">Until we <em>celebrate together</em></h2>
+<section class="countdown-section" id="countdown" aria-labelledby="countdown-title">
+  <div class="wrap countdown-layout">
+    <div class="countdown-heading">
+    <p class="eyebrow reveal">Every moment brings us closer</p>
+    <h2 class="reveal" id="countdown-title">Until we<br /><em>celebrate together.</em></h2>
+    </div><div>
 
-    <div class="countdown reveal" id="clock" role="timer" aria-live="off">
+    <div class="countdown reveal" id="clock" role="timer" aria-label="Time until the wedding" aria-live="off">
       <div class="unit"><span class="unit__num" id="cd-days">—</span><span class="unit__label">Days</span></div>
       <div class="unit"><span class="unit__num" id="cd-hours">—</span><span class="unit__label">Hours</span></div>
       <div class="unit"><span class="unit__num" id="cd-mins">—</span><span class="unit__label">Minutes</span></div>
       <div class="unit"><span class="unit__num" id="cd-secs">—</span><span class="unit__label">Seconds</span></div>
     </div>
 
-    <p class="countdown__note reveal">Saturday, 10 October 2026 at 8:00 PM &middot; Asia/Amman (UTC+3)</p>
+    <p class="countdown__note reveal">10 October 2026 · 8:00 PM, Amman time</p>
+    </div>
   </div>
 </section>
 
 <!-- ── Details ────────────────────────────────────────────────────── -->
-<section class="section" id="details">
-  <div class="wrap center">
-    <p class="eyebrow reveal">The celebration</p>
-    <h2 class="reveal">Event Details</h2>
+<section class="section details-section" id="details" aria-labelledby="details-title">
+  <div class="wrap">
+    <div class="section-heading reveal"><p class="eyebrow"><span class="section-index">01</span> The celebration</p>
+    <h2 id="details-title">A day for love.<br /><em>An evening together.</em></h2></div>
 
     <div class="cards">
       <article class="card reveal">
-        <span class="card__icon" aria-hidden="true">&#9788;</span>
-        <h3>Date</h3>
-        <p class="card__lead">Saturday</p>
-        <p>10 October 2026</p>
+        <div class="card__top"><span class="card__number">01 /</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18M8 15h2m4 0h2"/></svg></div>
+        <h3>The date</h3><p class="card__lead">10 October</p><p>Saturday, 2026</p>
       </article>
 
       <article class="card reveal">
-        <span class="card__icon" aria-hidden="true">&#9790;</span>
-        <h3>Time</h3>
+        <div class="card__top"><span class="card__number">02 /</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>The time</h3>
         <p class="card__lead">8:00 PM</p>
         <p>Amman time (UTC+3)</p>
       </article>
 
       <article class="card reveal">
-        <span class="card__icon" aria-hidden="true">&#10022;</span>
-        <h3>Venue</h3>
+        <div class="card__top"><span class="card__number">03 /</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <h3>The place</h3>
         <p class="card__lead">Dunes Club</p>
         <p>Airport Street, Amman, Jordan</p>
       </article>
     </div>
 
-    <p class="deadline reveal">Kindly reply by <strong>Saturday, 26 September 2026</strong></p>
+    <p class="deadline reveal">A seat at our celebration, a place in our hearts.<br />Kindly reply by <strong>Saturday, 26 September 2026</strong></p>
   </div>
 </section>
 
 <!-- ── Venue / Map ────────────────────────────────────────────────── -->
-<section class="section section--tint" id="venue">
-  <div class="wrap center">
-    <p class="eyebrow reveal">How to find us</p>
-    <h2 class="reveal">Dunes Club</h2>
-    <p class="lede reveal">Airport Street, Amman, Jordan</p>
-
-    <div class="map reveal">
-      <iframe
-        src="https://maps.google.com/maps?q=Dunes+Club+Airport+Street+Amman+Jordan&output=embed"
-        title="Map showing Dunes Club, Airport Street, Amman, Jordan"
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        allowfullscreen></iframe>
+<section class="section venue-section" id="venue" aria-labelledby="venue-title">
+  <div class="wrap venue-layout">
+    <div class="venue-copy reveal"><p class="eyebrow"><span class="section-index">02</span> Meet us here</p>
+      <h2 id="venue-title">An evening<br />at <em>Dunes Club.</em></h2>
+      <p class="lede">Airport Street<br />Amman, Jordan</p>
+      <a class="btn btn--outline" href="https://maps.app.goo.gl/DzVhZnCfE6zw4JU46" target="_blank" rel="noopener noreferrer">Get directions <span aria-hidden="true">↗</span></a>
+      <p class="venue-note">Saturday, 10 October · 8:00 PM</p>
     </div>
-
-    <a class="btn btn--outline reveal" href="https://maps.app.goo.gl/DzVhZnCfE6zw4JU46" target="_blank" rel="noopener noreferrer">
-      Get Directions
-    </a>
+    <div class="venue-map reveal"><div class="map"><iframe src="https://maps.google.com/maps?q=Dunes+Club+Airport+Street+Amman+Jordan&output=embed" title="Map showing Dunes Club, Airport Street, Amman, Jordan" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
+      <div class="map-caption"><span>Dunes Club</span><span>Amman, Jordan ↗</span></div>
+    </div>
   </div>
 </section>
 
 <!-- ── RSVP ───────────────────────────────────────────────────────── -->
-<section class="section" id="rsvp">
-  <div class="wrap wrap--narrow center">
-    <p class="eyebrow reveal">Will you join us?</p>
-    <h2 class="reveal">RSVP</h2>
-    <p class="lede reveal">Please let us know by <strong>26 September 2026</strong> so we can save your seat.</p>
-
-    <form class="form reveal" id="rsvp-form" novalidate>
+<section class="section rsvp-section" id="rsvp" aria-labelledby="rsvp-title">
+  <div class="wrap rsvp-layout">
+    <div class="rsvp-copy reveal"><p class="eyebrow"><span class="section-index">03</span> A reply, with love</p>
+      <h2 id="rsvp-title">It wouldn’t be<br />the same<br /><em>without you.</em></h2>
+      <p class="lede">We’d love to celebrate with you.<br />Let us know if you’ll be joining us.</p>
+      <div class="rsvp-deadline"><span>Kindly respond by</span><strong>26 September</strong><span>2026</span></div>
+      <p class="rsvp-signature" aria-hidden="true">Ahmed &amp; Rawan</p>
+    </div>
+    <div class="rsvp-panel reveal">
+    <form class="form" id="rsvp-form" novalidate>
+      <div class="form-heading"><h3>Your RSVP</h3><span>With love, A &amp; R</span></div>
 
       <!-- Q2 · entry.1498135098 -->
       <div class="field">
         <label class="field__label" for="fullName">Your Full Name <span class="req" aria-hidden="true">*</span></label>
-        <input class="input" type="text" id="fullName" name="fullName" autocomplete="name"
-               placeholder="e.g. Emran Hisham Abdalla" required />
-        <p class="field__error" data-error-for="fullName" hidden>Please enter your full name.</p>
+        <input class="input" type="text" id="fullName" name="fullName" aria-describedby="error-fullName" autocomplete="name"
+               placeholder="First and last name" required />
+        <p class="field__error" id="error-fullName" data-error-for="fullName" hidden>Please enter your full name.</p>
       </div>
 
       <!-- Q1 · entry.877086558 -->
@@ -206,36 +174,36 @@
         <legend class="field__label">Will you be joining us? <span class="req" aria-hidden="true">*</span></legend>
         <div class="choices" id="attendance-group">
           <label class="choice">
-            <input type="radio" name="attendance" value="Yes !!!!!!!" required />
+            <input type="radio" name="attendance" aria-describedby="error-attendance" value="Yes !!!!!!!" required />
             <span class="choice__box">
-              <span class="choice__title">Attending</span>
-              <span class="choice__sub">Joyfully accepts</span>
+              <span class="choice__title">Joyfully accepts</span>
+              <span class="choice__sub">I’ll be there</span>
             </span>
           </label>
           <label class="choice">
-            <input type="radio" name="attendance" value="Unfortunately, can't make it" />
+            <input type="radio" name="attendance" aria-describedby="error-attendance" value="Unfortunately, can't make it" />
             <span class="choice__box">
-              <span class="choice__title">Not Attending</span>
-              <span class="choice__sub">Regretfully declines</span>
+              <span class="choice__title">Regretfully declines</span>
+              <span class="choice__sub">Celebrating from afar</span>
             </span>
           </label>
           <label class="choice">
-            <input type="radio" name="attendance" value="Not sure yet" />
+            <input type="radio" name="attendance" aria-describedby="error-attendance" value="Not sure yet" />
             <span class="choice__box">
               <span class="choice__title">Still Deciding</span>
               <span class="choice__sub">Will confirm soon</span>
             </span>
           </label>
         </div>
-        <p class="field__error" data-error-for="attendance" hidden>Please choose one option.</p>
+        <p class="field__error" id="error-attendance" data-error-for="attendance" hidden>Please choose one option.</p>
       </fieldset>
 
       <!-- Q3 · entry.111771323 -->
       <div class="field">
-        <label class="field__label" for="guests">Number of Attendance (Total Guests) <span class="req" aria-hidden="true">*</span></label>
+        <label class="field__label" for="guests">Number of guests <span class="req" aria-hidden="true">*</span></label>
         <div class="select-wrap">
-          <select class="input select" id="guests" name="guests" required>
-            <option value="" selected disabled>Select…</option>
+          <select class="input select" id="guests" name="guests" aria-describedby="guests-hint error-guests" required>
+            <option value="" selected disabled>Select your party size</option>
             <option value="1 guest">1 guest</option>
             <option value="2 guests">2 guests</option>
             <option value="3 guests">3 guests</option>
@@ -243,20 +211,20 @@
             <!-- "5+ guests" is injected by app.js only when GUESTS_OTHER_ENABLED is true -->
           </select>
         </div>
-        <p class="field__hint">Including yourself. If you can’t make it, please still select 1 — the form requires an answer.</p>
-        <p class="field__error" data-error-for="guests" hidden>Please select the number of guests.</p>
+        <p class="field__hint" id="guests-hint">Including yourself. If declining, select 1 guest.</p>
+        <p class="field__error" id="error-guests" data-error-for="guests" hidden>Please select the number of guests.</p>
 
         <div class="field field--nested" id="guests-other-wrap" hidden>
           <label class="field__label" for="guestsOther">How many guests in total?</label>
-          <input class="input" type="text" id="guestsOther" name="guestsOther" placeholder="e.g. 6 guests" />
-          <p class="field__error" data-error-for="guestsOther" hidden>Please tell us the total number of guests.</p>
+          <input class="input" type="text" id="guestsOther" name="guestsOther" aria-describedby="error-guestsOther" placeholder="e.g. 6 guests" />
+          <p class="field__error" id="error-guestsOther" data-error-for="guestsOther" hidden>Please tell us the total number of guests.</p>
         </div>
       </div>
 
       <!-- Q4 · entry.2606285 (paragraph field — several names are expected) -->
       <div class="field">
-        <label class="field__label" for="invitedGuest">Invited guest’s full name <span class="opt">optional</span></label>
-        <textarea class="input input--area" id="invitedGuest" name="invitedGuest" rows="2"
+        <label class="field__label" for="invitedGuest">Your guests’ names <span class="opt">optional</span></label>
+        <textarea class="input input--area" aria-describedby="invited-hint" id="invitedGuest" name="invitedGuest" rows="2"
                   placeholder="Layla Haddad, Omar Haddad"></textarea>
         <p class="field__hint" id="invited-hint">
           Bringing others? List their full names, separated by commas.
@@ -264,41 +232,38 @@
       </div>
 
       <button class="btn btn--solid btn--block" type="submit" id="submit-btn">
-        <span class="btn__text">Send RSVP</span>
+        <span class="btn__text">Send with love</span><span class="btn__arrow" aria-hidden="true">↗</span>
         <span class="btn__spinner" aria-hidden="true"></span>
       </button>
 
       <p class="form__status" id="form-status" role="status" aria-live="polite"></p>
+      <p class="form__fallback">Prefer another way? <a href="https://docs.google.com/forms/d/e/1FAIpQLSeSD16PNk9E58y66-ZE1n2k4e8hrH2YjhoCexKhlGOcYEVKKQ/viewform" target="_blank" rel="noopener noreferrer">Open our RSVP form</a></p>
     </form>
 
     <!-- Success panel -->
-    <div class="thanks" id="thanks" hidden>
+    <div class="thanks" id="thanks" tabindex="-1" hidden>
       <span class="thanks__mark" aria-hidden="true">&#10022;</span>
       <h3 id="thanks-title">Thank you!</h3>
-      <p id="thanks-body">Your RSVP has been received. We can’t wait to celebrate with you.</p>
+      <p id="thanks-body"></p>
       <button class="btn btn--ghost" type="button" id="another-btn">Submit another RSVP</button>
       <p class="thanks__fallback">
-        Something went wrong?
+        We can’t verify delivery here. If you’re unsure,
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSeSD16PNk9E58y66-ZE1n2k4e8hrH2YjhoCexKhlGOcYEVKKQ/viewform"
            target="_blank" rel="noopener noreferrer">Reply on our form directly</a>.
       </p>
     </div>
   </div>
+    </div>
 </section>
 
 <!-- ── Footer ─────────────────────────────────────────────────────── -->
-<footer class="footer">
-  <div class="wrap center">
-    <div class="monogram monogram--sm" aria-hidden="true">
-      <span class="monogram__letter">A</span><span class="monogram__amp">&amp;</span><span class="monogram__letter">R</span>
-    </div>
-    <p class="footer__note">
-      Thank you for being part of our story. Your presence — near or far — means
-      more to us than we can say. We can’t wait to celebrate with you.
-    </p>
-    <p class="footer__meta">Ahmed &amp; Rawan &middot; 10 October 2026 &middot; Dunes Club, Amman</p>
-  </div>
-</footer>
+</main>
+<footer class="footer"><div class="wrap">
+  <p class="eyebrow reveal">The beginning of forever</p>
+  <p class="footer__names reveal">Ahmed <em>&amp;</em> Rawan</p>
+  <p class="footer__note reveal">Thank you for being part of our story.</p>
+  <div class="footer__bottom"><span>10 October 2026 · Dunes Club, Amman</span><a href="#hero">Back to the beginning <span aria-hidden="true">↑</span></a></div>
+</div></footer>
 
 </div><!-- /.site -->
 

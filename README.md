@@ -11,8 +11,10 @@ RSVP deadline: **26 September 2026**.
 
 ```
 index.html          hero · countdown · details · venue · RSVP · footer
-assets/styles.css   sage-green & cream design system
-assets/app.js       countdown, scroll reveal, Google Forms submission
+assets/styles.css   olive & ivory responsive design system, motion, reduced-motion support
+assets/app.js       invitation, countdown, scroll reveal, Google Forms submission
+assets/wedding-still-life.webp  original silk-and-roses hero artwork (116 KB)
+tests/site.test.cjs isolated behavior and asset checks, no live RSVP submissions
 vercel.json         static hosting config
 ```
 
@@ -20,17 +22,19 @@ vercel.json         static hosting config
 
 Responses are posted to the live form's `formResponse` endpoint as `FormData`
 with `mode: "no-cors"`. Opaque responses can't be read, so success is shown
-optimistically once the request is dispatched.
+as sent once the request resolves. The thank-you panel explicitly says that
+delivery cannot be verified. Network failures and timeouts keep the form and
+entered values visible, restore the submit button, and offer a direct form link.
 
 Form ID: `1FAIpQLSeSD16PNk9E58y66-ZE1n2k4e8hrH2YjhoCexKhlGOcYEVKKQ`
 
-### ⚠️ Required setting: the form must not require sign-in
+### Integration setting to verify: guest access
 
-As built, the form shows **"Sign in to continue — you must sign in to fill out
-this form"**, every field is disabled, and `POST /formResponse` returns
-**HTTP 401**. Until that is turned off, RSVPs submitted from this site are
-silently discarded (a `no-cors` response is opaque, so the page can't detect it
-and will still show the thank-you message).
+An earlier integration review reported that this Google Form required sign-in
+and rejected unauthenticated submissions with HTTP 401. Its current settings
+have not been verified in this design refactor. Google can reject submissions
+even when the request resolves because `no-cors` responses hide HTTP status.
+Check the form in a signed-out browser before relying on guest replies.
 
 Fix it in the form editor: **Settings → Responses → turn off "Requires sign in"**
 (on a Google Workspace account this reads *"Restrict to users in <domain> and its
@@ -101,6 +105,31 @@ fd.append("entry.111771323.other_option_response", "6 guests");
 ```bash
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
+
+## Design and motion
+
+The page uses editorial name typography, a locally hosted WebP still life,
+an animated invitation card, staggered section reveals, a floating date seal,
+subtle desktop image parallax, animated countdown updates, and a navigation
+progress line. The intro appears once per tab and is skipped for direct section
+links and visitors who request reduced motion. Keyboard users can skip with
+Escape; focus stays inside the opening dialog until it closes.
+
+Layouts switch to a single column on phones. The RSVP action remains available
+in the fixed navigation. Without JavaScript, content remains visible and the
+direct Google Form link replaces the custom form controls.
+
+## Checks
+
+```bash
+node --check assets/app.js
+node --test tests/site.test.cjs
+```
+
+The tests exercise input validation, exact field values, failed and timed-out
+requests, repeat submissions, countdown completion, dialog keyboard handling,
+reduced-motion bypass, and local asset references. All form requests are mocked.
+These code checks do not replace visual browser QA.
 
 ## Deploy
 
