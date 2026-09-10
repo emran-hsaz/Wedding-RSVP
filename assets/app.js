@@ -81,6 +81,8 @@
     function reveal() {
       if (finished) return;
       finished = true;
+      clearTimeout(wheelReset);
+      releaseGesture();
       gate.classList.add("is-leaving");
       gate.inert = true;
       site.inert = false;
@@ -118,45 +120,76 @@
     }
 
     var gesture = null, suppressClick = false;
+    var SWIPE_DISTANCE = 64;
+    var wheelDistance = 0, wheelReset;
     function resetPull() {
       gate.classList.remove("is-dragging");
       gate.style.setProperty("--pull", "0");
     }
-    openBtn.addEventListener("pointerdown", function (event) {
-      if (opened || finished || event.isPrimary === false || (event.button !== undefined && event.button !== 0)) return;
-      gesture = { id: event.pointerId, x: event.clientX, y: event.clientY, distance: 0, horizontal: false };
+    function releaseGesture() {
+      var previous = gesture;
+      gesture = null;
+      if (!previous) return;
+      try {
+        if (previous.capture.hasPointerCapture(previous.id)) previous.capture.releasePointerCapture(previous.id);
+      } catch (_) { /* The browser may already have released a cancelled pointer. */ }
+    }
+    gate.addEventListener("pointerdown", function (event) {
+      if (opened || finished || event.target === skipBtn || (event.button !== undefined && event.button !== 0)) return;
+      if (event.isPrimary === false) { releaseGesture(); resetPull(); return; }
+      clearTimeout(wheelReset);
+      wheelDistance = 0;
+      // Preserve the button's click target; background swipes capture on the gate.
+      var capture = openBtn.contains(event.target) ? openBtn : gate;
+      gesture = { id: event.pointerId, x: event.clientX, y: event.clientY, distance: 0, capture: capture };
       suppressClick = false;
-      openBtn.setPointerCapture(event.pointerId);
+      try { capture.setPointerCapture(event.pointerId); } catch (_) {}
     });
-    openBtn.addEventListener("pointermove", function (event) {
+    gate.addEventListener("pointermove", function (event) {
       if (!gesture || gesture.id !== event.pointerId || opened) return;
       var dx = event.clientX - gesture.x, dy = event.clientY - gesture.y;
       gesture.distance = Math.max(gesture.distance, Math.abs(dx), Math.abs(dy));
-      if (Math.abs(dx) > 18 && Math.abs(dx) > Math.abs(dy)) gesture.horizontal = true;
-      if (gesture.horizontal || dy < 0) { resetPull(); return; }
+      if (Math.abs(dx) > Math.abs(dy) || dy < 0) { resetPull(); return; }
       if (dy > 8) {
         gate.classList.add("is-dragging");
-        gate.style.setProperty("--pull", String(Math.min(dy / 120, 1)));
+        gate.style.setProperty("--pull", String(Math.min(dy / SWIPE_DISTANCE, 1)));
       }
     });
     function endGesture(event) {
       if (!gesture || gesture.id !== event.pointerId) return;
       var dy = event.clientY - gesture.y;
-      var shouldOpen = event.type !== "pointercancel" && !gesture.horizontal && dy >= 90 && Math.abs(event.clientX - gesture.x) < dy * .8;
+      var shouldOpen = event.type !== "pointercancel" && dy >= SWIPE_DISTANCE && Math.abs(event.clientX - gesture.x) < dy;
       suppressClick = gesture.distance > 8 || Math.abs(dy) > 8 || event.type === "pointercancel";
-      gesture = null;
-      if (openBtn.hasPointerCapture(event.pointerId)) openBtn.releasePointerCapture(event.pointerId);
+      releaseGesture();
       if (shouldOpen) open();
       else resetPull();
     }
-    openBtn.addEventListener("pointerup", endGesture);
-    openBtn.addEventListener("pointercancel", endGesture);
-    openBtn.addEventListener("lostpointercapture", function () {
+    gate.addEventListener("pointerup", endGesture);
+    gate.addEventListener("pointercancel", endGesture);
+    gate.addEventListener("lostpointercapture", function () {
       if (!gesture) return;
       gesture = null;
       suppressClick = true;
       resetPull();
     });
+    gate.addEventListener("wheel", function (event) {
+      if (opened || finished || gesture || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      // Prevent the locked intro from swallowing normal downward scroll input.
+      event.preventDefault();
+      if (event.deltaY <= 0) {
+        clearTimeout(wheelReset);
+        wheelDistance = 0;
+        resetPull();
+        return;
+      }
+      var unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
+      wheelDistance += event.deltaY * unit;
+      gate.classList.add("is-dragging");
+      gate.style.setProperty("--pull", String(Math.min(wheelDistance / SWIPE_DISTANCE, 1)));
+      clearTimeout(wheelReset);
+      if (wheelDistance >= SWIPE_DISTANCE) { wheelDistance = 0; open(); }
+      else wheelReset = setTimeout(function () { wheelDistance = 0; resetPull(); }, 250);
+    }, { passive: false });
     openBtn.addEventListener("click", function (event) {
       // Ignore the synthetic click following a drag, but keep Enter/Space usable.
       if (suppressClick && event.detail !== 0) { suppressClick = false; return; }

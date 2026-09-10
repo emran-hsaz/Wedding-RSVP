@@ -25,7 +25,12 @@ function fixture({ seen = true, reduced = false, hash = '', now = '2026-09-10T17
     setAttribute(name, value) { this.attributes[name] = value; }
     removeAttribute(name) { delete this.attributes[name]; }
     addEventListener(name, callback) { this.listeners[name] = callback; }
-    fire(name, extra = {}) { return this.listeners[name]?.({ type: name, preventDefault() {}, stopPropagation() {}, ...extra }); }
+    fire(name, extra = {}) {
+      const event = { type: name, target: this, preventDefault() {}, stopPropagation() {}, ...extra };
+      this.listeners[name]?.(event);
+      if (this.parentElement && (name.startsWith('pointer') || name === 'lostpointercapture')) this.parentElement.listeners[name]?.(event);
+    }
+    contains(element) { return element === this || element?.parentElement === this; }
     setPointerCapture(id) { this.pointer = id; }
     hasPointerCapture(id) { return this.pointer === id; }
     releasePointerCapture() { this.pointer = null; }
@@ -39,6 +44,8 @@ function fixture({ seen = true, reduced = false, hash = '', now = '2026-09-10T17
   const nodes = {};
   for (const match of html.matchAll(/\bid="([^"]+)"/g)) nodes[match[1]] = new Element(match[1]);
   nodes.thanks.hidden = true;
+  nodes['gate-open'].parentElement = nodes.gate;
+  nodes['gate-skip'].parentElement = nodes.gate;
   nodes['guests-other-wrap'].hidden = true;
   const radios = ['Yes !!!!!!!', "Unfortunately, can't make it", 'Not sure yet'].map(value => Object.assign(new Element(), { value }));
   const buttonText = new Element();
@@ -213,6 +220,44 @@ test('short, upward, sideways, and cancelled swipes do not open the invitation',
     button.fire('click', { detail: 0 });
     assert.ok(f.nodes.gate.classes.has('is-open'), 'keyboard opening remains available');
   }
+});
+
+test('a shorter downward swipe starting on the background opens the invitation', () => {
+  const f = fixture(), gate = f.nodes.gate;
+  gate.fire('pointerdown', { pointerId: 1, clientX: 100, clientY: 100, button: 0 });
+  gate.fire('pointermove', { pointerId: 1, clientX: 118, clientY: 170 });
+  assert.ok(gate.classes.has('is-dragging'));
+  gate.fire('pointerup', { pointerId: 1, clientX: 118, clientY: 170 });
+  assert.ok(gate.classes.has('is-open'));
+});
+
+test('downward wheel and accumulated trackpad scrolling open the invitation', () => {
+  for (const deltas of [[90], [22,22,22]]) {
+    const f = fixture();
+    for (const deltaY of deltas) f.nodes.gate.fire('wheel', { deltaX: 0, deltaY, deltaMode: 0 });
+    assert.ok(f.nodes.gate.classes.has('is-open'));
+  }
+  const lines = fixture();
+  lines.nodes.gate.fire('wheel', { deltaX: 0, deltaY: 4, deltaMode: 1 });
+  assert.ok(lines.nodes.gate.classes.has('is-open'));
+});
+
+test('upward scrolling, sideways scrolling, and zoom gestures do not open', () => {
+  for (const event of [{ deltaY: -100, deltaX: 0 }, { deltaY: 40, deltaX: 100 }, { deltaY: 100, deltaX: 0, ctrlKey: true }]) {
+    const f = fixture(); f.nodes.gate.fire('wheel', { deltaMode: 0, ...event });
+    assert.equal(f.nodes.gate.classes.has('is-open'), false);
+  }
+});
+
+test('background click does not open; skip control and pinch remain independent', () => {
+  const f = fixture(); f.nodes.gate.fire('click', { detail: 1 });
+  assert.equal(f.nodes.gate.classes.has('is-open'), false);
+  f.nodes.gate.fire('pointerdown', { pointerId: 1, clientX: 100, clientY: 100 });
+  f.nodes.gate.fire('pointerdown', { pointerId: 2, clientX: 120, clientY: 100, isPrimary: false });
+  f.nodes.gate.fire('pointerup', { pointerId: 1, clientX: 100, clientY: 200 });
+  assert.equal(f.nodes.gate.classes.has('is-open'), false);
+  f.nodes['gate-skip'].fire('click');
+  assert.equal(f.nodes.site.inert, false);
 });
 
 test('guest hints follow party size without enabling unsupported Google options', () => {

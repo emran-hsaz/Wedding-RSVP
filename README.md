@@ -122,7 +122,8 @@ with the visual theme in `invitation-theme.css`.
 
 The page retains staggered reveals, animated countdown updates, and a navigation
 progress line. The invitation appears on every page load, including direct section links.
-Click the card or swipe down at least 90 pixels to open it. The rose-gold cover
+Click the card, swipe down at least 64 pixels anywhere on the opening screen,
+or scroll down with a mouse wheel or trackpad to open it. The rose-gold cover
 folds in 3D as you drag; short or sideways gestures return it to its closed state.
 Reduced-motion visitors keep both opening controls without the 3D animation. Keyboard users can skip with
 Escape; focus stays inside the opening dialog until it closes.
