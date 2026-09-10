@@ -14,6 +14,9 @@ index.html          hero · countdown · details · venue · RSVP · footer
 assets/styles.css   light pink & rose responsive design system, motion, reduced-motion support
 assets/app.js       invitation, countdown, scroll reveal, Google Forms submission
 assets/wedding-still-life.webp  original silk-and-roses hero artwork (116 KB)
+assets/invitation-theme.css    satin-and-lace theme based on the video reference
+assets/ivory-satin.webp         original satin background (164 KB)
+assets/lace-envelope.webp       original transparent lace envelope (389 KB)
 tests/site.test.cjs isolated behavior and asset checks, no live RSVP submissions
 vercel.json         static hosting config
 ```
@@ -108,10 +111,16 @@ python3 -m http.server 8000   # then open http://localhost:8000
 
 ## Design and motion
 
-The page uses DM Sans headings and Inter body text, light blush surfaces with
-rose accents and dark plum text, a locally hosted WebP still life,
-an animated invitation card, staggered section reveals, a floating date seal,
-subtle desktop image parallax, animated countdown updates, and a navigation
+The customer's video reference informs the ivory satin background, lace-edged
+envelope, rose-gold A&R seal, centered invitation, fine event timeline, and
+translucent floral RSVP panel. Bodoni Moda headings, Italianno name lettering,
+and Inter form text balance the reference style with readable controls.
+Original optimized WebP artwork provides the fabric and envelope details;
+the reference video's watermark, other couple's details, and browser UI are
+not included. Shared layout and interaction styles remain in `styles.css`,
+with the visual theme in `invitation-theme.css`.
+
+The page retains staggered reveals, animated countdown updates, and a navigation
 progress line. The invitation appears on every page load, including direct section links.
 Click the card or swipe down at least 90 pixels to open it. The rose-gold cover
 folds in 3D as you drag; short or sideways gestures return it to its closed state.

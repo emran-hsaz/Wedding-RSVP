@@ -1,0 +1,188 @@
+/* Satin, lace and rose gold: the customer's video reference.
+   Shared layout, form controls and motion remain in styles.css. */
+:root {
+  --paper: #fffaf6;
+  --white: #fffdf9;
+  --ink: #493530;
+  --muted: #76605b;
+  --rose: #955c56;
+  --rose-deep: #77443f;
+  --accent: #88564f;
+  --line: #dfc9bf;
+  --wash: #f7eeea;
+  --blush: #f1e5de;
+  --display: "Bodoni Moda", Georgia, serif;
+  --accent-font: "Italianno", cursive;
+}
+.gate {
+  background: linear-gradient(#fffaf638, #f1e5de66), url("ivory-satin.webp") center / cover;
+  gap: 26px;
+  padding: 35px 24px 75px;
+  isolation: isolate;
+}
+.gate::before { inset: 22px; border-color: #fffaf6b3; }
+.gate__intro { padding: 12px 25px; border-radius: 50%; background: radial-gradient(ellipse, #fffaf6a8, #fffaf600 72%); }
+.gate__intro .eyebrow { color: var(--ink); font-family: var(--display); font-size: 1.05rem; text-transform: none; letter-spacing: .01em; }
+.gate__names { font-family: var(--accent-font); font-size: clamp(3.8rem, 8.5vw, 6rem); line-height: 1.1; font-weight: 400; margin-top: 8px; }
+.gate__names span { color: var(--accent); font-family: var(--display); font-size: .6em; padding-inline: .1em; }
+.gate__date { color: var(--ink); font-size: .8125rem; letter-spacing: .05em; }
+.gate__open { gap: 24px; perspective: 1400px; }
+.invitation-card {
+  width: min(490px, 82vw);
+  height: auto;
+  aspect-ratio: 3/2;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  transform: rotateX(calc(var(--pull, 0) * -6deg)) translateY(calc(var(--pull, 0) * 14px));
+}
+.invitation-card__inside {
+  z-index: 1;
+  inset: 13% 12% 8%;
+  padding: 15px 20px;
+  gap: 16px;
+  color: var(--ink);
+  background: #fffaf6;
+  border: 1px solid #d7b2a4;
+  outline: 1px solid #dfc9bf;
+  outline-offset: -9px;
+  box-shadow: 0 10px 30px #49353015;
+  transform: translateY(calc(var(--pull, 0) * -40%));
+  transition: transform 1s var(--ease) .1s;
+}
+.invitation-card__inside strong { font: 400 clamp(2.3rem, 5vw, 3.3rem)/1.1 var(--accent-font); }
+.invitation-card__inside > span:first-child { font-size: .75rem; letter-spacing: .03em; }
+.invitation-card__inside > span:last-child { font: 400 .9375rem/1.65 var(--display); }
+.invitation-card__pocket, .invitation-card__cover {
+  position: absolute;
+  inset: 0;
+  display: block;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  border-radius: 0;
+  background: url("lace-envelope.webp") center / 100% 100% no-repeat;
+}
+.invitation-card__pocket { z-index: 2; clip-path: polygon(0 9%, 50% 83%, 100% 9%, 100% 100%, 0 100%); }
+.invitation-card__cover { z-index: 3; clip-path: polygon(0 0, 100% 0, 100% 9%, 50% 83%, 0 9%); transform-origin: 50% 8%; }
+.gate.is-dragging .invitation-card__inside { transition: none; }
+.gate.is-open .invitation-card { transform: translate3d(0, 22px, 40px) rotateX(-6deg); }
+.gate.is-open .invitation-card__inside { transform: translateY(-52%); }
+.gate.is-open .invitation-card__cover { box-shadow: none; }
+.gate__label { font: 400 1rem var(--display); letter-spacing: .09em; text-transform: uppercase; }
+.gate__swipe { color: var(--ink); }
+.gate__skip { color: var(--ink); background: #fffaf6bd; border-radius: 999px; }
+@media (hover: hover) { .gate:not(.is-dragging):not(.is-open) .gate__open:hover .invitation-card { transform: translateY(-5px) rotateX(4deg); } }
+
+.nav { background: #fffaf6e8; }
+.nav.is-stuck { background: #fffaf6f2; }
+.nav__mark { font-family: var(--display); }
+.hero {
+  width: 100%;
+  min-height: min(1000px, 100svh);
+  display: flex;
+  justify-content: center;
+  padding: calc(var(--nav-h) + 55px) 24px 100px;
+  background: linear-gradient(#fffaf645, #f1e5de65), url("ivory-satin.webp") center / cover;
+}
+.hero__inner {
+  position: relative;
+  width: min(750px, 100%);
+  padding: clamp(35px, 5vw, 65px) 28px;
+  background: #fffaf6db;
+  border: 1px solid #ffffffd9;
+  outline: 1px solid #ba8a7780;
+  outline-offset: -14px;
+  box-shadow: 0 24px 80px #49353016;
+  text-align: center;
+}
+.hero__inner > .eyebrow { color: var(--muted); margin-bottom: 28px; }
+.hero__names { display: flex; align-items: center; justify-content: center; gap: 22px; font: 400 clamp(4.5rem, 7.5vw, 6.8rem)/1.05 var(--accent-font); letter-spacing: 0; overflow-wrap: normal; }
+.hero__surname { margin: 12px 0 0; font-family: var(--sans); font-size: .75rem; letter-spacing: .22em; }
+.hero__conj { font: italic 400 1.6rem var(--display); margin: 0 0 28px; }
+.hero__invitation { font: 400 1.125rem/1.8 var(--display); color: var(--ink); margin-top: 28px; }
+.hero__date { padding: 0; border: 0; justify-content: center; margin-top: 22px; }
+.hero__actions { align-items: center; margin-top: 25px; }
+.hero__scroll { left: 50%; transform: translateX(-50%); white-space: nowrap; color: var(--ink); }
+.countdown-section { background: var(--paper); border-block: 1px solid var(--line); }
+.countdown-heading .eyebrow, .countdown__note, .unit__label { color: var(--muted); }
+.countdown-heading em { color: var(--accent); }
+.unit__num { font-family: var(--display); }
+.unit + .unit { border-color: var(--line); }
+
+/* The reference's fine vertical event timeline, using the actual wedding details. */
+.details-section { background: #34231f; color: #fff5ed; }
+.details-section .eyebrow, .details-section .section-index { color: #e1b9a7; }
+.details-section h2 { font: 400 clamp(4rem, 7vw, 6rem)/1.2 var(--accent-font); letter-spacing: 0; }
+.cards { display: block; position: relative; width: min(740px, 100%); margin: 50px auto 35px; border: 0; }
+.cards::before { content: ""; position: absolute; top: 15px; bottom: 15px; left: 50%; width: 1px; background: #d4ac9866; }
+.card { position: relative; min-height: 155px; padding: 28px 0; border: 0; }
+.card + .card { border: 0; }
+.card:nth-child(odd) { padding-right: calc(50% + 35px); text-align: right; }
+.card:nth-child(even) { padding-left: calc(50% + 35px); text-align: left; }
+.card::after { content: ""; position: absolute; left: calc(50% - 4px); top: 52px; height: 8px; width: 8px; background: #e1b9a7; transform: rotate(45deg); }
+.card__top { position: absolute; top: 38px; left: calc(50% + 35px); display: flex; flex-direction: row; gap: 15px; color: #e1b9a7; margin: 0; float: none; }
+.card:nth-child(even) .card__top { left: auto; right: calc(50% + 35px); flex-direction: row-reverse; }
+.card:hover { background: transparent; transform: none; }
+.card h3, .card p:last-child { color: #dec8bd; }
+.card__lead { font-family: var(--display); font-size: clamp(1.8rem, 3vw, 2.4rem); }
+.details-section .deadline { color: #dec8bd; }
+.details-section .deadline strong { color: #f4d4c3; }
+.venue-section { background: var(--paper); }
+.venue-map { border-color: var(--line); background: var(--wash); }
+.venue-note { color: var(--muted); }
+
+.rsvp-section { background: linear-gradient(90deg, #34231fe0, #34231f66), url("wedding-still-life.webp") center 65% / cover; color: #fff5ed; }
+.rsvp-copy .eyebrow, .rsvp-copy .lede, .rsvp-deadline span { color: #f2e0d6; }
+.rsvp-copy .section-index, .rsvp-copy h2 em, .rsvp-signature { color: #f0cbb9; }
+.rsvp-copy h2 { font-family: var(--display); }
+.rsvp-signature { font: 400 clamp(3rem, 5vw, 4rem)/1.3 var(--accent-font); }
+.rsvp-deadline { border-color: #f0cbb97a; }
+.rsvp-panel { background: #fffaf6ed; backdrop-filter: blur(12px); border: 1px solid #ffffff9e; box-shadow: 0 25px 70px #22151238; }
+.form-heading h3 { font-family: var(--display); }
+.form .input { background: #fffaf6ad; }
+.footer { background: var(--wash); }
+.footer__names { font: 400 clamp(4rem, 9vw, 7rem)/1.25 var(--accent-font); letter-spacing: 0; }
+.footer__names em { font-family: var(--display); font-size: .55em; }
+
+@media (max-width: 760px) {
+  .gate { gap: 22px; padding-top: 25px; }
+  .gate__names { font-size: clamp(3.7rem, 13vw, 5rem); }
+  .gate__intro { padding-inline: 10px; }
+  .invitation-card__inside { gap: 10px; padding: 12px; }
+  .invitation-card__inside > span:first-child { font-size: .75rem; }
+  .invitation-card__inside > span:last-child { font-size: .875rem; }
+  .hero { min-height: 100svh; padding: calc(var(--nav-h) + 35px) 20px 85px; }
+  .hero__inner { padding: 40px 22px; }
+  .hero__names { flex-direction: column; gap: 12px; font-size: clamp(4.6rem, 18vw, 6.5rem); }
+  .hero__surname { margin-top: 7px; }
+  .hero__conj { margin: 0; font-size: 1.25rem; }
+  .hero__inner > .eyebrow { font-size: .75rem; letter-spacing: .12em; }
+  .hero__invitation { font-size: 1.05rem; margin-top: 22px; }
+  .hero__scroll { font-size: .75rem; }
+  .cards { width: min(500px, 100%); }
+  .card:nth-child(odd) { padding-right: calc(50% + 22px); }
+  .card:nth-child(even) { padding-left: calc(50% + 22px); }
+  .card__top { left: calc(50% + 22px); }
+  .card:nth-child(even) .card__top { right: calc(50% + 22px); }
+  .card__lead { font-size: 1.75rem; }
+  .card p:last-child { font-size: .875rem; }
+  .rsvp-section { background-image: linear-gradient(#34231fe0, #34231f66), url("wedding-still-life.webp"); }
+}
+@media (max-height: 720px) {
+  .gate { justify-content: flex-start; gap: 14px; padding: 24px 20px; }
+  .gate__names { font-size: 3.7rem; }
+  .gate__intro { padding-block: 0; }
+  .gate__date { margin-top: 5px; }
+  .invitation-card { width: min(390px, 76vw); height: auto; }
+  .gate__open { gap: 15px; }
+  .gate__swipe { margin-top: -6px; }
+  .gate__skip { position: static; }
+}
+@media (prefers-reduced-motion: reduce) { .gate .invitation-card__inside { transform: none !important; } }
+@media print {
+  .hero, .details-section, .rsvp-section { background: white; color: black; }
+  .hero__inner, .rsvp-panel { box-shadow: none; background: white; }
+  .details-section * { color: black !important; }
+}
