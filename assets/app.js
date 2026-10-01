@@ -470,7 +470,7 @@
              "we’ll be thinking of you on the day.";
     }
     return "Thanks, " + first + " — your reply has been sent. " +
-           "Just resubmit this form once you know, before 26 September.";
+           "Just resubmit this form once you know.";
   }
 
   form.addEventListener("submit", function (e) {

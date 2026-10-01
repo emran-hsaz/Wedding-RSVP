@@ -5,7 +5,6 @@ straight into an existing Google Form. Plain HTML / CSS / vanilla JS — no buil
 step, no dependencies, no API keys.
 
 **Saturday, 10 October 2026 · 8:00 PM · Dunes Club, Airport Street, Amman, Jordan**
-RSVP deadline: **26 September 2026**.
 
 ## Structure
 
