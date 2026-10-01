@@ -113,24 +113,39 @@
 .unit__num { font-family: var(--display); }
 .unit + .unit { border-color: var(--line); }
 
-/* The reference's fine vertical event timeline, using the actual wedding details. */
-.details-section { background: #34231f; color: #fff5ed; }
+/* Evening stationery: a floral portrait beside clear, generous event rows. */
+.details-section { position: relative; background: radial-gradient(ellipse at 0 0, #69483c55, transparent 65%), #30221e; color: #fff5ed; border-block: 1px solid #cda48b40; }
+.details-section :focus-visible { outline-color: #f0d3c2; }
+.celebration-layout { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1fr); gap: clamp(40px, 7vw, 100px); align-items: center; }
+.celebration-portrait { position: relative; margin: 0; min-width: 0; aspect-ratio: 3 / 4.2; overflow: hidden; background: #5c483a; border-radius: 48% 48% 2px 2px; box-shadow: 0 24px 65px #160e0b40; }
+.celebration-portrait::before { content: ""; position: absolute; inset: 13px; z-index: 1; border: 1px solid #fff3dd66; border-radius: inherit; pointer-events: none; }
+.celebration-portrait::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 42%, #211711c9 100%); pointer-events: none; }
+.celebration-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 62% center; }
+.celebration-caption { position: absolute; z-index: 1; bottom: 42px; left: 24px; right: 24px; text-align: center; color: #fff5ed; }
+.celebration-caption > span { display: block; font-size: .8125rem; letter-spacing: .045em; }
+.celebration-caption strong { display: block; margin-top: 8px; font: 400 clamp(2.3rem, 3.4vw, 3.5rem)/1.15 var(--accent-font); }
+.celebration-content { min-width: 0; }
+.details-section .section-heading { text-align: left; }
 .details-section .eyebrow, .details-section .section-index { color: #e1b9a7; }
-.details-section h2 { font: 400 clamp(4rem, 7vw, 6rem)/1.2 var(--accent-font); letter-spacing: 0; }
-.cards { display: block; position: relative; width: min(740px, 100%); margin: 50px auto 35px; border: 0; }
-.cards::before { content: ""; position: absolute; top: 15px; bottom: 15px; left: 50%; width: 1px; background: #d4ac9866; }
-.card { position: relative; min-height: 155px; padding: 28px 0; border: 0; }
-.card + .card { border: 0; }
-.card:nth-child(odd) { padding-right: calc(50% + 35px); text-align: right; }
-.card:nth-child(even) { padding-left: calc(50% + 35px); text-align: left; }
-.card::after { content: ""; position: absolute; left: calc(50% - 4px); top: 52px; height: 8px; width: 8px; background: #e1b9a7; transform: rotate(45deg); }
-.card__top { position: absolute; top: 38px; left: calc(50% + 35px); display: flex; flex-direction: row; gap: 15px; color: #e1b9a7; margin: 0; float: none; }
-.card:nth-child(even) .card__top { left: auto; right: calc(50% + 35px); flex-direction: row-reverse; }
-.card:hover { background: transparent; transform: none; }
-.card h3, .card p:last-child { color: #dec8bd; }
-.card__lead { font-family: var(--display); font-size: clamp(1.8rem, 3vw, 2.4rem); }
-.details-section .deadline { color: #dec8bd; }
-.details-section .deadline strong { color: #f4d4c3; }
+.details-section h2 { margin-top: 24px; font: 400 clamp(2.7rem, 4vw, 4rem)/1.13 var(--display); letter-spacing: -.025em; }
+.details-section h2 em { display: inline-block; margin-top: 2px; color: #e9c5b3; font: 400 1.28em/1 var(--accent-font); letter-spacing: 0; }
+.celebration-intro { margin-top: 20px; color: #d9c4b9; font-size: .9375rem; line-height: 1.8; }
+.details-section .cards { display: block; margin: 34px 0 0; border-block: 1px solid #d4ac983d; }
+.details-section .card { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 20px; align-items: center; padding: 22px 0; border: 0; text-align: left; }
+.details-section .card + .card { border-top: 1px solid #d4ac9833; }
+.details-section .card:hover { background: transparent; transform: none; }
+.details-section .card__top { display: grid; place-items: center; place-content: center; width: 44px; height: 44px; float: none; margin: 0; color: #e1b9a7; border: 1px solid #d4ac9840; border-radius: 50%; }
+.details-section .card__top .icon { width: 22px; height: 22px; }
+.details-section .card__body { min-width: 0; }
+.details-section .card h3 { margin-bottom: 6px; font-size: .6875rem; letter-spacing: .17em; color: #d5b2a0; }
+.details-section .card__lead { margin-bottom: 5px; font: 400 clamp(1.8rem, 2.5vw, 2.3rem)/1.2 var(--display); }
+.details-section .card p:last-child { color: #d9c4b9; font-size: .8125rem; line-height: 1.7; }
+.details-section .card__number { align-self: start; margin-top: 3px; color: #d5b2a0; font: italic .8125rem var(--display); }
+.celebration-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 28px; }
+.celebration-rsvp { background: #ecd3c2; color: #3d2b23; border-color: #ecd3c2; gap: 18px; }
+.celebration-rsvp:hover { background: #fff0e3; border-color: #fff0e3; color: #3d2b23; }
+.celebration-link { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: #f0d3c2; font-size: .8125rem; text-decoration-color: #d4ac9873; text-underline-offset: 6px; }
+.celebration-link:hover { text-decoration-color: currentColor; }
 .venue-section { background: var(--paper); }
 .venue-map { border-color: var(--line); background: var(--wash); }
 .venue-note { color: var(--muted); }
@@ -163,13 +178,16 @@
   .hero__inner > .eyebrow { font-size: .75rem; letter-spacing: .12em; }
   .hero__invitation { font-size: 1.05rem; margin-top: 22px; }
   .hero__scroll { font-size: .75rem; }
-  .cards { width: min(500px, 100%); }
-  .card:nth-child(odd) { padding-right: calc(50% + 22px); }
-  .card:nth-child(even) { padding-left: calc(50% + 22px); }
-  .card__top { left: calc(50% + 22px); }
-  .card:nth-child(even) .card__top { right: calc(50% + 22px); }
-  .card__lead { font-size: 1.75rem; }
-  .card p:last-child { font-size: .875rem; }
+  .celebration-layout { grid-template-columns: minmax(0, 1fr); gap: 42px; max-width: 560px; }
+  .celebration-portrait { width: min(330px, 100%); aspect-ratio: 4 / 3.8; margin-inline: auto; border-radius: 46% 46% 2px 2px; }
+  .celebration-portrait img { object-position: center 70%; }
+  .celebration-caption { bottom: 28px; left: 20px; right: 20px; }
+  .celebration-caption strong { font-size: 2.5rem; }
+  .details-section .section-heading { text-align: center; }
+  .details-section h2 { font-size: clamp(2.6rem, 8vw, 3.3rem); }
+  .details-section .cards { margin-top: 30px; }
+  .details-section .card { gap: 16px; }
+  .celebration-actions { justify-content: center; }
   .rsvp-section { background-image: linear-gradient(#34231fe0, #34231f66), url("wedding-still-life.webp"); }
 }
 @media (max-height: 720px) {
@@ -187,4 +205,7 @@
   .hero, .details-section, .rsvp-section { background: white; color: black; }
   .hero__inner, .rsvp-panel { box-shadow: none; background: white; }
   .details-section * { color: black !important; }
+  .celebration-layout { display: block; }
+  .celebration-portrait, .celebration-actions { display: none; }
+  .details-section .cards, .details-section .card + .card { border-color: #ccc; }
 }

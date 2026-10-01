@@ -18,8 +18,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=Italianno&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/ivory-satin.webp" as="image" />
 <link rel="preload" href="assets/lace-envelope.webp" as="image" />
-<link rel="stylesheet" href="assets/styles.css?v=satin-motion-3" />
-<link rel="stylesheet" href="assets/invitation-theme.css?v=satin-motion-3" />
+<link rel="stylesheet" href="assets/styles.css?v=celebration-4" />
+<link rel="stylesheet" href="assets/invitation-theme.css?v=celebration-4" />
 
 
 <noscript><style>#rsvp-form > :not(.form-heading):not(.form__fallback) { display:none; }</style></noscript>
@@ -97,32 +97,44 @@
 
 <!-- ── Details ────────────────────────────────────────────────────── -->
 <section class="section details-section" id="details" aria-labelledby="details-title">
-  <div class="wrap">
-    <div class="section-heading reveal"><p class="eyebrow"><span class="section-index">01</span> The celebration</p>
-    <h2 id="details-title">The details</h2></div>
+  <div class="wrap celebration-layout">
+    <figure class="celebration-portrait reveal">
+      <img src="assets/wedding-still-life.webp" alt="" width="1086" height="1448" loading="lazy" decoding="async" />
+      <figcaption class="celebration-caption"><span>A seat at our celebration,</span><strong>a place in our hearts.</strong></figcaption>
+    </figure>
 
-    <div class="cards">
-      <article class="card reveal">
-        <div class="card__top"><span class="card__number">01 /</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18M8 15h2m4 0h2"/></svg></div>
-        <h3>The date</h3><p class="card__lead">10 October</p><p>Saturday, 2026</p>
-      </article>
+    <div class="celebration-content">
+      <div class="section-heading reveal">
+        <p class="eyebrow"><span class="section-index">01</span> The celebration</p>
+        <h2 id="details-title">An evening<br /><em>to remember.</em></h2>
+        <p class="celebration-intro">Together with the people we love most.</p>
+      </div>
 
-      <article class="card reveal">
-        <div class="card__top"><span class="card__number">02 /</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-        <h3>The time</h3>
-        <p class="card__lead">8:00 PM</p>
-        <p>Amman time (UTC+3)</p>
-      </article>
+      <div class="cards">
+        <article class="card reveal">
+          <div class="card__top" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18M8 15h2m4 0h2"/></svg></div>
+          <div class="card__body"><h3>The date</h3><p class="card__lead"><time datetime="2026-10-10">10 October</time></p><p>Saturday, 2026</p></div>
+          <span class="card__number" aria-hidden="true">01</span>
+        </article>
 
-      <article class="card reveal">
-        <div class="card__top"><span class="card__number">03 /</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
-        <h3>The place</h3>
-        <p class="card__lead">Dunes Club</p>
-        <p>Airport Street, Amman, Jordan</p>
-      </article>
+        <article class="card reveal">
+          <div class="card__top" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div class="card__body"><h3>The time</h3><p class="card__lead"><time datetime="2026-10-10T20:00:00+03:00">8:00 PM</time></p><p>Amman time (UTC+3)</p></div>
+          <span class="card__number" aria-hidden="true">02</span>
+        </article>
+
+        <article class="card reveal">
+          <div class="card__top" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div class="card__body"><h3>The place</h3><p class="card__lead">Dunes Club</p><p>Airport Street, Amman, Jordan</p></div>
+          <span class="card__number" aria-hidden="true">03</span>
+        </article>
+      </div>
+
+      <div class="celebration-actions reveal">
+        <a class="btn celebration-rsvp" href="#rsvp">Join the celebration <span aria-hidden="true">↗</span></a>
+        <a class="celebration-link" href="#venue">Explore the venue <span aria-hidden="true">↗</span></a>
+      </div>
     </div>
-
-    <p class="deadline reveal">A seat at our celebration, a place in our hearts.</p>
   </div>
 </section>
 

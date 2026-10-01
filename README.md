@@ -111,7 +111,7 @@ python3 -m http.server 8000   # then open http://localhost:8000
 ## Design and motion
 
 The customer's video reference informs the ivory satin background, lace-edged
-envelope, rose-gold A&R seal, centered invitation, fine event timeline, and
+envelope, rose-gold A&R seal, centered invitation, floral celebration portrait, and
 translucent floral RSVP panel. Bodoni Moda headings, Italianno name lettering,
 and Inter form text balance the reference style with readable controls.
 Original optimized WebP artwork provides the fabric and envelope details;
