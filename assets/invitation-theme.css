@@ -36,6 +36,7 @@
   background: none;
   box-shadow: none;
   transform: rotateX(calc(var(--pull, 0) * -6deg)) translateY(calc(var(--pull, 0) * 14px));
+  transition: transform .7s var(--ease), opacity .45s ease;
 }
 .invitation-card__inside {
   z-index: 1;
@@ -48,8 +49,8 @@
   outline: 1px solid #dfc9bf;
   outline-offset: -9px;
   box-shadow: 0 10px 30px #49353015;
-  transform: translateY(calc(var(--pull, 0) * -40%));
-  transition: transform 1s var(--ease) .1s;
+  transform: translateY(calc(var(--letter-pull, 0) * -52%));
+  transition: transform .45s var(--ease);
 }
 .invitation-card__inside strong { font: 400 clamp(2.3rem, 5vw, 3.3rem)/1.1 var(--accent-font); }
 .invitation-card__inside > span:first-child { font-size: .75rem; letter-spacing: .03em; }
@@ -65,11 +66,12 @@
   background: url("lace-envelope.webp") center / 100% 100% no-repeat;
 }
 .invitation-card__pocket { z-index: 2; clip-path: polygon(0 9%, 50% 83%, 100% 9%, 100% 100%, 0 100%); }
-.invitation-card__cover { z-index: 3; clip-path: polygon(0 0, 100% 0, 100% 9%, 50% 83%, 0 9%); transform-origin: 50% 8%; }
+.invitation-card__cover { z-index: 3; clip-path: polygon(0 0, 100% 0, 100% 9%, 50% 83%, 0 9%); transform-origin: 50% 8%; transition: transform .6s var(--ease); }
 .gate.is-dragging .invitation-card__inside { transition: none; }
 .gate.is-open .invitation-card { transform: translate3d(0, 22px, 40px) rotateX(-6deg); }
-.gate.is-open .invitation-card__inside { transform: translateY(-52%); }
+.gate.is-open .invitation-card__inside { transform: translateY(-52%); transition-duration: .65s; transition-delay: .25s; }
 .gate.is-open .invitation-card__cover { box-shadow: none; }
+.gate.is-leaving .invitation-card { transform: translate3d(0, 34px, 0) rotateX(-4deg); opacity: 0; transition: transform .45s var(--ease), opacity .45s ease; }
 .gate__label { font: 400 1rem var(--display); letter-spacing: .09em; text-transform: uppercase; }
 .gate__swipe { color: var(--ink); }
 .gate__skip { color: var(--ink); background: #fffaf6bd; border-radius: 999px; }

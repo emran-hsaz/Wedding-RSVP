@@ -40,8 +40,7 @@
   var OTHER_SENTINEL = "__other_option__";
   var OTHER_LABEL = "5+ guests (please specify)";
 
-  /* Lets the scroll-reveal cascade hold until the camera has landed, so the
-     page settles in front of the visitor instead of arriving pre-assembled. */
+  /* Start page reveals when the invitation begins its handoff. */
   var gateDone = false, gateWaiters = [];
   function markGateDone() {
     gateDone = true;
@@ -63,7 +62,7 @@
 
     var openBtn = document.getElementById("gate-open");
     var skipBtn = document.getElementById("gate-skip");
-    var opened = false, finished = false;
+    var opened = false, finished = false, openTimer;
     gate.hidden = false;
     site.inert = true;
     document.documentElement.classList.add("gate-active");
@@ -81,8 +80,10 @@
     function reveal() {
       if (finished) return;
       finished = true;
+      clearTimeout(openTimer);
       clearTimeout(wheelReset);
       releaseGesture();
+      gate.classList.remove("is-dragging");
       gate.classList.add("is-leaving");
       gate.inert = true;
       site.inert = false;
@@ -96,8 +97,7 @@
 
       site.classList.add("is-revealed");
 
-      // Hero copy starts cascading while the camera is still settling — the
-      // overlap is what stops it feeling like two separate animations.
+      // Let the page appear underneath the fading envelope.
       markGateDone();
       var focusTarget = target || document.getElementById("hero-title");
       if (focusTarget) {
@@ -107,24 +107,40 @@
 
       setTimeout(function () {
         if (gate.parentNode) gate.parentNode.removeChild(gate);
-      }, motionPreference.matches ? 0 : 750);
+      }, motionPreference.matches ? 0 : 500);
     }
 
     function open() {
       if (opened || finished) return;
       opened = true;
+      clearTimeout(wheelReset);
+      releaseGesture();
       gate.classList.remove("is-dragging");
       gate.classList.add("is-open");
       if (motionPreference.matches) reveal();
-      else setTimeout(reveal, 1100);
+      else openTimer = setTimeout(reveal, 1100);
     }
+
+    // Follow the actual card transition; the timer covers an already-open
+    // drag, a cancelled transition, or a browser that does not emit the event.
+    gate.addEventListener("transitionend", function (event) {
+      if (opened && event.target.classList.contains("invitation-card__inside") && event.propertyName === "transform") reveal();
+    });
+    motionPreference.addEventListener("change", function () {
+      if (motionPreference.matches && opened) reveal();
+    });
 
     var gesture = null, suppressClick = false;
     var SWIPE_DISTANCE = 64;
     var wheelDistance = 0, wheelReset;
+    function setPull(value) {
+      gate.style.setProperty("--pull", String(value));
+      // The flap clears the pocket before the invitation starts sliding out.
+      gate.style.setProperty("--letter-pull", String(Math.max(0, (value - .55) / .45)));
+    }
     function resetPull() {
       gate.classList.remove("is-dragging");
-      gate.style.setProperty("--pull", "0");
+      setPull(0);
     }
     function releaseGesture() {
       var previous = gesture;
@@ -152,7 +168,7 @@
       if (Math.abs(dx) > Math.abs(dy) || dy < 0) { resetPull(); return; }
       if (dy > 8) {
         gate.classList.add("is-dragging");
-        gate.style.setProperty("--pull", String(Math.min(dy / SWIPE_DISTANCE, 1)));
+        setPull(Math.min(dy / SWIPE_DISTANCE, 1));
       }
     });
     function endGesture(event) {
@@ -173,9 +189,10 @@
       resetPull();
     });
     gate.addEventListener("wheel", function (event) {
-      if (opened || finished || gesture || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
-      // Prevent the locked intro from swallowing normal downward scroll input.
+      if (finished || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      // Keep wheel momentum from moving the intro while it is opening.
       event.preventDefault();
+      if (opened || gesture) return;
       if (event.deltaY <= 0) {
         clearTimeout(wheelReset);
         wheelDistance = 0;
@@ -184,11 +201,13 @@
       }
       var unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
       wheelDistance += event.deltaY * unit;
-      gate.classList.add("is-dragging");
-      gate.style.setProperty("--pull", String(Math.min(wheelDistance / SWIPE_DISTANCE, 1)));
       clearTimeout(wheelReset);
       if (wheelDistance >= SWIPE_DISTANCE) { wheelDistance = 0; open(); }
-      else wheelReset = setTimeout(function () { wheelDistance = 0; resetPull(); }, 250);
+      else {
+        gate.classList.add("is-dragging");
+        setPull(wheelDistance / SWIPE_DISTANCE);
+        wheelReset = setTimeout(function () { wheelDistance = 0; resetPull(); }, 250);
+      }
     }, { passive: false });
     openBtn.addEventListener("click", function (event) {
       // Ignore the synthetic click following a drag, but keep Enter/Space usable.
@@ -239,14 +258,18 @@
       if (out[key].textContent === values[key]) return;
       out[key].textContent = values[key];
       if (!motionPreference.matches) {
-        out[key].classList.remove("is-ticking");
-        requestAnimationFrame(function () { out[key].classList.add("is-ticking"); });
+        out[key].classList.add("is-ticking");
       }
     });
   }
 
   var timer;
   if (clock && out.days) {
+    Object.keys(out).forEach(function (key) {
+      out[key].addEventListener("animationend", function () {
+        out[key].classList.remove("is-ticking");
+      });
+    });
     timer = setInterval(tick, 1000);
     tick();
   }
@@ -280,17 +303,18 @@
   /* ── Scroll reveal ───────────────────────────────────────────── */
   var revealables = document.querySelectorAll(".reveal");
 
-  if ("IntersectionObserver" in window) {
+  if ("IntersectionObserver" in window && !motionPreference.matches) {
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry, i) {
-        if (!entry.isIntersecting) return;
+      var groups = new Map();
+      entries.filter(function (entry) { return entry.isIntersecting; }).forEach(function (entry) {
         var el = entry.target;
-        // stagger siblings so a section assembles line by line
-        el.style.transitionDelay = Math.min(i * 95, 420) + "ms";
+        var count = groups.get(el.parentElement) || 0;
+        groups.set(el.parentElement, count + 1);
+        el.style.setProperty("--reveal-delay", Math.min(count * 70, 210) + "ms");
         el.classList.add("is-visible");
         io.unobserve(el);
       });
-    }, { threshold: 0.08, rootMargin: "0px 0px -20px 0px" });
+    }, { threshold: 0, rootMargin: "0px 0px 32px 0px" });
 
     document.documentElement.classList.add("motion-ready");
 
@@ -302,6 +326,14 @@
   } else {
     revealables.forEach(function (el) { el.classList.add("is-visible"); });
   }
+  motionPreference.addEventListener("change", function () {
+    if (!motionPreference.matches) return;
+    if (io) io.disconnect();
+    revealables.forEach(function (el) { el.classList.add("is-visible"); });
+    Object.keys(out).forEach(function (key) {
+      if (out[key]) out[key].classList.remove("is-ticking");
+    });
+  });
 
   // Keep the current section visible in the letterhead without a scroll loop.
   if ("IntersectionObserver" in window) {
